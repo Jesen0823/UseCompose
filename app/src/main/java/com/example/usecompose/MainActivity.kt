@@ -72,7 +72,13 @@ fun MyScreenContent(names:List<String> = listOf("Android","there")){
 @Composable
 fun Counter(count:Int, updateCount:(Int) ->Unit){
 
-    Button(onClick = { updateCount(count+1) }) {
+    Button(
+        onClick = { updateCount(count+1) },
+        colors = ButtonDefaults.buttonColors(
+            backgroundColor = if (count > 2) Color.Green else Color.White,
+            contentColor = if (count > 2) Color.Red else Color.Blue
+        )
+    ) {
         Text("I've been clicked $count times")
     }
 }
