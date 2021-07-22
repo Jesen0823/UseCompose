@@ -6,6 +6,8 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -42,24 +44,21 @@ fun Greeting(name: String) {
     Text(text = "Hello $name!", modifier = Modifier.padding(24.dp))
 }
 
+// it 就是names中的元素
 @Composable
-fun MyScreenContent(names:List<String> = listOf("Android","there")){
+fun MyScreenContent(names:List<String> = List(1000){"Hello Android #$it"}){
 
     val counterState = remember {
         mutableStateOf(0)
     }
 
     Column(modifier = Modifier.fillMaxHeight()) {
-        Column(modifier = Modifier.weight(1f)) {
-            for (name in names){
-                Greeting(name = name)
-                Divider(color = Color.Black)
-            }
-        }
+        NameList(names = names, Modifier.weight(1f))
         /*Greeting(name = "Android")
         Divider(color = Color.Black)
         Greeting("there")*/
-        Divider(color = Color.Transparent, thickness = 32.dp)
+
+        //Divider(color = Color.Transparent, thickness = 32.dp)
         Counter(
             count = counterState.value,
             updateCount = {newCount ->
@@ -80,6 +79,17 @@ fun Counter(count:Int, updateCount:(Int) ->Unit){
         )
     ) {
         Text("I've been clicked $count times")
+    }
+}
+
+@Composable
+fun NameList(names: List<String>, modifier: Modifier = Modifier){
+    // LazyColumn类似于Recyclerview
+    LazyColumn(modifier = modifier) {
+        items(items = names) { name ->
+            Greeting(name = name)
+            Divider(color = Color.Black)
+        }
     }
 }
 
