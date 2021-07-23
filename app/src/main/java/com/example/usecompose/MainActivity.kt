@@ -46,9 +46,11 @@ fun Greeting(name: String) {
     val bgColor by animateColorAsState(if (isSelected) Color.Red else Color.Transparent)
     Text(
         text = "Hello $name!",
-        modifier = Modifier.padding(24.dp)
+        modifier = Modifier
+            .padding(24.dp)
             .background(color = bgColor)
-            .clickable(onClick = {isSelected = !isSelected})
+            .clickable(onClick = { isSelected = !isSelected }),
+        style = MaterialTheme.typography.h1
     )
 }
 
