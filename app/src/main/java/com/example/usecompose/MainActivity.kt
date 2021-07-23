@@ -50,7 +50,7 @@ fun Greeting(name: String) {
             .padding(24.dp)
             .background(color = bgColor)
             .clickable(onClick = { isSelected = !isSelected }),
-        style = MaterialTheme.typography.h1
+        style = MaterialTheme.typography.body2
     )
 }
 
