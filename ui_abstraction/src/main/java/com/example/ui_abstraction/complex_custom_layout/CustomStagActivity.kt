@@ -3,7 +3,10 @@ package com.example.ui_abstraction.complex_custom_layout
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.NavigateNext
@@ -59,9 +62,11 @@ val topics = listOf(
 
 @Composable
 fun BodyContents(modifier: Modifier = Modifier) {
-    StaggeredGrid(modifier = modifier){
-        for (topic in topics) {
-            Chip(modifier = Modifier.padding(8.dp), text = topic)
+    Row(modifier = modifier.horizontalScroll(rememberScrollState())) {
+        StaggeredGrid(modifier = modifier, rows = 5) {
+            for (topic in topics) {
+                Chip(modifier = Modifier.padding(8.dp), text = topic)
+            }
         }
     }
 }
