@@ -1,8 +1,10 @@
 package com.example.ui_abstraction
 
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -21,6 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.ui_abstraction.ui.theme.LayoutsCodeTheme
+import com.example.ui_abstraction.util.mStartActivity
 import androidx.compose.material.Surface as Surface
 
 class MainActivity : ComponentActivity() {
@@ -39,13 +42,16 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun PhotographerCard(modifier: Modifier = Modifier){
+
     Row(
         // 链式调用先后顺序不同，效果也会不同
         modifier
             .padding(8.dp)
             .clip(RoundedCornerShape(4.dp))
             .background(MaterialTheme.colors.surface)
-            .clickable(onClick = {/* onClick*/ })
+            .clickable(onClick = {
+                //mStartActivity<ScaffoldActivity>(AmbientContext){}
+            })
             .padding(16.dp)
     ){
         Surface(
@@ -54,6 +60,7 @@ fun PhotographerCard(modifier: Modifier = Modifier){
             color = MaterialTheme.colors.onSurface.copy(alpha = 0.2f)
         ){
             // Image add
+
         }
         Column(
             // Modifier的链式调用
