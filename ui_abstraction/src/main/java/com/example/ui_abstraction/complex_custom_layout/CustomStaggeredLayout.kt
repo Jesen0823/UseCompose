@@ -1,5 +1,7 @@
 package com.example.ui_abstraction.complex_custom_layout
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -18,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import com.example.ui_abstraction.ui.theme.LayoutsCodeTheme
 import java.lang.Integer.max
 
+@RequiresApi(Build.VERSION_CODES.N)
 @Composable
 fun StaggeredGrid(
     modifier: Modifier = Modifier,
@@ -41,7 +44,7 @@ fun StaggeredGrid(
             // Track the width and max height of each row
             val row = index % rows
             rowWidths[row] += placeable.width
-            rowHeights[row] = Math.max(rowHeights[row], placeable.height)
+            rowHeights[row] = max(rowHeights[row], placeable.height)
 
             placeable
         }

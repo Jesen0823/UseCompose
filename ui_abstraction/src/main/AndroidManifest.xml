@@ -13,8 +13,7 @@
         android:theme="@style/Theme.UseCompose">
         <activity
             android:name=".complex_custom_layout.CustomStagActivity"
-            android:exported="true"
-            android:theme="@style/Theme.UseCompose.NoActionBar" >
+            android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
