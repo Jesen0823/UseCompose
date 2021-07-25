@@ -9,3 +9,4 @@ dependencyResolutionManagement {
 rootProject.name = "UseCompose"
 include ':app'
 include ':ui_abstraction'
+include ':ThemingCodelab'
