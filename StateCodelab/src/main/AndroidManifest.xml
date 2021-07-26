@@ -10,15 +10,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.StateCodelab">
         <activity
+            android:name=".start.state.examples.HelloCodeLabActivityWithViewModel1"
+            android:exported="true" />
+        <activity
             android:name=".start.state.todo.TodoActivity"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.StateCodelab.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:theme="@style/Theme.StateCodelab.NoActionBar"></activity>
         <activity
             android:name=".start.state.examples.HelloCodelabActivity"
             android:exported="true" />
@@ -27,9 +25,14 @@
             android:exported="true" />
         <activity
             android:name=".finish.state.todo.TodoActivity"
+            android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.StateCodelab.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
     </application>
 
