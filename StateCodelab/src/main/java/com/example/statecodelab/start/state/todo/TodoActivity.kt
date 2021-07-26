@@ -22,6 +22,8 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import com.example.statecodelab.finish.state.todo.TodoItem
 import com.example.statecodelab.start.state.ui.StateCodelabTheme
 
@@ -40,20 +42,22 @@ class TodoActivity : AppCompatActivity() {
         }
     }
 }
+
 /*
 该Composable将是ViewModel中存储的State和项目中已经定义的TodoScreen之间的桥梁。
 虽然可以将TodoScreen更改为直接获取ViewModel，但是会降低TodoScreen的可重用性。
 通过选择更简单的参数，如List<TodoItem>，TodoScreen不会耦合到State被提升的特定位置。
 * */
 @Composable
-fun TodoActivityScreen(todoViewModel:TodoViewModel){
-    val items = listOf<TodoItem>()
+fun TodoActivityScreen(todoViewModel: TodoViewModel) {
+    // observeAsState 观察 LiveData 返回 State 对象，数据下流
+    val items: List<TodoItem> by todoViewModel.todoItems.observeAsState(initial = listOf())
     TodoScreen(
         items = items,
         // 从ViewModel传递addItem和removeItem
         // 如此，当调用TodoScreen的onAddItem或onRemoveItem,事件就上流到了ViewModel
-        onAddItem = {todoViewModel.addItem(it)},
-        onRemoveItem ={todoViewModel.removeItem(it)}
+        onAddItem = { todoViewModel.addItem(it) },
+        onRemoveItem = { todoViewModel.removeItem(it) }
     )
 }
 
