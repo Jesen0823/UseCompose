@@ -21,6 +21,8 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material.Surface
+import androidx.compose.runtime.Composable
+import com.example.statecodelab.finish.state.todo.TodoItem
 import com.example.statecodelab.start.state.ui.StateCodelabTheme
 
 class TodoActivity : AppCompatActivity() {
@@ -32,9 +34,34 @@ class TodoActivity : AppCompatActivity() {
         setContent {
             StateCodelabTheme {
                 Surface {
-                    // TODO: build the screen in compose
+                    TodoActivityScreen(todoViewModel = todoViewModel)
                 }
             }
         }
     }
 }
+/*
+该Composable将是ViewModel中存储的State和项目中已经定义的TodoScreen之间的桥梁。
+虽然可以将TodoScreen更改为直接获取ViewModel，但是会降低TodoScreen的可重用性。
+通过选择更简单的参数，如List<TodoItem>，TodoScreen不会耦合到State被提升的特定位置。
+* */
+@Composable
+fun TodoActivityScreen(todoViewModel:TodoViewModel){
+    val items = listOf<TodoItem>()
+    TodoScreen(
+        items = items,
+        onAddItem = {},
+        onRemoveItem ={}
+    )
+}
+
+
+
+
+
+
+
+
+
+
+
