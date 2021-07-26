@@ -50,8 +50,10 @@ fun TodoActivityScreen(todoViewModel:TodoViewModel){
     val items = listOf<TodoItem>()
     TodoScreen(
         items = items,
-        onAddItem = {},
-        onRemoveItem ={}
+        // 从ViewModel传递addItem和removeItem
+        // 如此，当调用TodoScreen的onAddItem或onRemoveItem,事件就上流到了ViewModel
+        onAddItem = {todoViewModel.addItem(it)},
+        onRemoveItem ={todoViewModel.removeItem(it)}
     )
 }
 
