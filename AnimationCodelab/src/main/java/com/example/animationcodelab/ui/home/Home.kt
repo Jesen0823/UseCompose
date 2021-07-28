@@ -461,9 +461,13 @@ private fun HomeTabIndicator(
         )
     val indicatorLeft by transition.animateDp (
         transitionSpec = {
-            if (TabPage.Home isTransitioningTo TabPage.Work){
+            if (TabPage.Home isTransitioningTo TabPage.Work) {
+                // Indicator moves to the right.
+                // The left edge moves slower than the right edge.
                 spring(stiffness = Spring.StiffnessVeryLow)
-            }else{
+            } else {
+                // Indicator moves to the left.
+                // The left edge moves faster than the right edge.
                 spring(stiffness = Spring.StiffnessMedium)
             }
         },
