@@ -12,6 +12,7 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/AnimationCodelab" />
+            <option value="$PROJECT_DIR$/CleanArchitecture" />
             <option value="$PROJECT_DIR$/StateCodelab" />
             <option value="$PROJECT_DIR$/ThemingCodelab" />
             <option value="$PROJECT_DIR$/app" />

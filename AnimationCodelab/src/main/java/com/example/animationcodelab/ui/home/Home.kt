@@ -296,13 +296,13 @@ private fun EditMessage(shown: Boolean) {
         visible = shown,
         enter = slideInVertically(
             // Enters by sliding down from offset -fullHeight to 0.
-            initialOffsetY = {fullHeight ->  -fullHeight},
+            initialOffsetY = { fullHeight -> -fullHeight },
             animationSpec = tween(durationMillis = 150, easing = LinearOutSlowInEasing)
         ),
         exit = slideOutVertically(
             // Exits by sliding up from offset 0 to -fullHeight.
-        targetOffsetY = { fullHeight -> -fullHeight },
-        animationSpec = tween(durationMillis = 250, easing = FastOutLinearInEasing)
+            targetOffsetY = { fullHeight -> -fullHeight },
+            animationSpec = tween(durationMillis = 250, easing = FastOutLinearInEasing)
         )
     ) {
         Surface(
@@ -461,8 +461,8 @@ private fun HomeTabIndicator(
     val transition = updateTransition(
         targetState = tabPage,
         label = "Tab indicator"
-        )
-    val indicatorLeft by transition.animateDp (
+    )
+    val indicatorLeft by transition.animateDp(
         transitionSpec = {
             if (TabPage.Home isTransitioningTo TabPage.Work) {
                 // Indicator moves to the right.
@@ -475,7 +475,7 @@ private fun HomeTabIndicator(
             }
         },
         label = "Indicator left"
-            ){ page ->
+    ) { page ->
         tabPositions[page.ordinal].left
     }
 
@@ -589,7 +589,7 @@ private fun WeatherRow(
 private fun LoadingRow() {
     // 5: Animate this value between 0f and 1f, then back to 0f repeatedly.
     //val alpha = 1f
-    val infiniteTransition  = rememberInfiniteTransition()
+    val infiniteTransition = rememberInfiniteTransition()
     val alpha by infiniteTransition.animateFloat(
         initialValue = 0f,
         targetValue = 1f,
@@ -708,10 +708,10 @@ private fun Modifier.swipeToDismiss(
                 launch {
                     // 6-6: Slide back the element if the settling position does not go beyond
                     //           the size of the element. Remove the element if it does.
-                    if (targetOffsetX.absoluteValue <= size.width){
+                    if (targetOffsetX.absoluteValue <= size.width) {
                         // Not enough velocity, Slide back
                         offsetX.animateTo(targetValue = 0f, initialVelocity = velocity)
-                    }else{
+                    } else {
                         // Enough velocity to slide away the element to the edge
                         offsetX.animateDecay(velocity, decay)
                         // The element was  swiped away
@@ -722,7 +722,7 @@ private fun Modifier.swipeToDismiss(
         }
     }
         .offset {
-            //  6-7: Use the animating offset value here.
+            // 6-7: Use the animating offset value here.
             IntOffset(offsetX.value.roundToInt(), 0)
         }
 }

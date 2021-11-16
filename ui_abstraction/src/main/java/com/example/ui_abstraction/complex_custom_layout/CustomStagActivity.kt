@@ -8,6 +8,7 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -42,7 +43,7 @@ fun CustomStagLayout() {
             TopAppBar(
                 title = {
                     Text(
-                        text = "LayoutCodelab",
+                        text = "CustomStagLayout",
                         style = MaterialTheme.typography.h3
                     )
                 },
@@ -58,6 +59,7 @@ fun CustomStagLayout() {
             Modifier
                 .padding(innerPadding)
                 .padding(8.dp)
+                .fillMaxSize()
         )
     }
 }
