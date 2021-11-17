@@ -8,9 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jesen.cleanarchitecture.feature_note.domain.model.InvalidNoteException
 import com.jesen.cleanarchitecture.feature_note.domain.model.NoteModel
-import com.jesen.cleanarchitecture.feature_note.domain.repository.NoteRepository
 import com.jesen.cleanarchitecture.feature_note.domain.use_case.NoteUseCase
-import com.jesen.cleanarchitecture.feature_note.presentation.notes.NotesEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
@@ -29,7 +27,7 @@ class EditNoteViewModel @Inject constructor(
             hint = "标题..."
         )
     )
-    private val noteTitleState: State<NoteTextFieldState> = _noteTitle
+    val noteTitleState: State<NoteTextFieldState> = _noteTitle
 
     private val _noteContent = mutableStateOf(
         NoteTextFieldState(
@@ -39,7 +37,7 @@ class EditNoteViewModel @Inject constructor(
     val noteContentState: State<NoteTextFieldState> = _noteContent
 
     private val _noteColor = mutableStateOf(NoteModel.noteColors.random().toArgb())
-    private val noteColorState = _noteColor
+    val noteColorState = _noteColor
 
     private val _eventFlow = MutableSharedFlow<UIEvent>()
     val eventFlow = _eventFlow
