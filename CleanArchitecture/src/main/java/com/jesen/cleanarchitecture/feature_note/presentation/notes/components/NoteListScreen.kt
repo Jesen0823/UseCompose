@@ -18,6 +18,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.jesen.cleanarchitecture.feature_note.presentation.notes.NotesEvent
 import com.jesen.cleanarchitecture.feature_note.presentation.notes.NotesViewModel
+import com.jesen.cleanarchitecture.navigation.Screen
 import kotlinx.coroutines.launch
 
 @ExperimentalAnimationApi
@@ -33,7 +34,10 @@ fun NoteListScreen(
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { /*TODO*/ },
+                // 点击跳转详情
+                onClick = {
+                    navController.navigate(Screen.EditNoteDetailScreen.route)
+                },
                 backgroundColor = MaterialTheme.colors.primary,
             ) {
                 Icon(
@@ -55,7 +59,7 @@ fun NoteListScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Your Note",
+                    text = "云中笔记",
                     style = MaterialTheme.typography.h4
                 )
                 IconButton(
@@ -92,13 +96,17 @@ fun NoteListScreen(
                 modifier = Modifier.fillMaxSize(),
             ) {
                 items(state.notes) { note ->
-                    NoteItem(
+                    NoteItemView(
                         note = note,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clickable {
-
-                            },
+                            .clickable(enabled = true,
+                                onClick = {
+                                    navController.navigate(
+                                        route = "detail_page_route?noteId=${note.id}&noteColor=${note.color}"
+                                    )
+                                }
+                            ),
                         onDeleteClick = {
                             viewModel.onEvent(NotesEvent.DeleteNote(note))
                             scope.launch {
@@ -112,10 +120,8 @@ fun NoteListScreen(
                             }
                         }
                     )
-
                     Spacer(modifier = Modifier.height(16.dp))
                 }
-
             }
         }
     }

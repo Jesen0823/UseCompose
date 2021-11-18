@@ -6,7 +6,7 @@ import com.jesen.cleanarchitecture.feature_note.domain.model.NoteModel
 
 @Database(
     entities = [NoteModel::class],
-    version = 1
+    version = 1, exportSchema = false
 )
 abstract class NoteDatabase : RoomDatabase() {
 

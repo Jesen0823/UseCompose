@@ -4,6 +4,7 @@ import androidx.compose.animation.Animatable
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector4D
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -16,8 +17,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Paint
+import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
@@ -80,97 +83,88 @@ fun EditNoteDetailScreen(
         },
         scaffoldState = scaffoldState
     ) {
-        DetailView(
-            backgroundAnimatable = noteBackgroundAnimatable,
-            scope = scope,
-            viewModel = viewModel,
-            titleState = titleState,
-            contentState = contentState,
-        )
-    }
-}
 
-@Composable
-fun DetailView(
-    scope: CoroutineScope,
-    backgroundAnimatable: Animatable<Color, AnimationVector4D>,
-    viewModel: EditNoteViewModel,
-    titleState: State<NoteTextFieldState>,
-    contentState: State<NoteTextFieldState>,
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(backgroundAnimatable.value)
-            .padding(16.dp)
-    ) {
-        Row(
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
+                .fillMaxSize()
+                .background(noteBackgroundAnimatable.value)
+                .padding(16.dp)
         ) {
-            NoteModel.noteColors.forEach { color ->
-                val colorInt = color.toArgb()
-                val isSelectColor = viewModel.noteColorState.value == colorInt
-                Box(
-                    modifier = Modifier
-                        .size(50.dp)
-                        .shadow(15.dp, CircleShape)
-                        .clip(CircleShape)
-                        .background(color = color)
-                        .advancedShadow(
-                            color = if (isSelectColor) Color.Black else Color.Transparent,
-                            shadowBlurRadius = if (isSelectColor) 4.dp else 0.dp
-                        )
-                        .clickable {
-                            scope.launch {
-                                backgroundAnimatable.animateTo(
-                                    targetValue = Color(colorInt),
-                                    animationSpec = tween(
-                                        durationMillis = 500
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                val colorState = viewModel.noteColorState
+
+                NoteModel.noteColors.forEach { color ->
+                    val colorInt = color.toArgb()
+                    val isSelectColor = colorState.value == colorInt
+                    Box(
+                        modifier = Modifier
+                            .size(if (isSelectColor) 50.dp else 46.dp)
+                            .shadow(15.dp, CircleShape)
+                            .clip(CircleShape)
+                            .background(color = color)
+                            .advancedShadow(
+                                color = if (isSelectColor) Color.Black else Color.Transparent,
+                                offsetX = if (isSelectColor) 2.dp else 0.dp,
+                                offsetY = if (isSelectColor) (-3).dp else 0.dp,
+                                alpha = if (isSelectColor) 1.0f else 0.7f
+                            )
+                            .clickable {
+                                scope.launch {
+                                    noteBackgroundAnimatable.animateTo(
+                                        targetValue = Color(colorInt),
+                                        animationSpec = tween(
+                                            durationMillis = 500
+                                        )
                                     )
-                                )
+                                    colorState.value = colorInt
+                                }
+                                viewModel.onEvent(AddEditNoteEvent.ChangeColor(colorInt))
                             }
-
-                            viewModel.onEvent(AddEditNoteEvent.ChangeColor(colorInt))
-                        }
-
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                // 标题和内容
-                TransparentHintTextField(
-                    text = titleState.value.text,
-                    hint = titleState.value.hint,
-                    onValueChange = {
-                        viewModel.onEvent(AddEditNoteEvent.PutTitle(it))
-                    },
-                    onFocusChange = {
-                        viewModel.onEvent(AddEditNoteEvent.ChangeContentFocus(it))
-                    },
-                    isHintVisible = titleState.value.isHintVisible,
-                    singleLine = true,
-                    textStyle = MaterialTheme.typography.h5
-                )
-
-
-                Spacer(modifier = Modifier.height(16.dp))
-                TransparentHintTextField(
-                    text = contentState.value.text,
-                    hint = contentState.value.hint,
-                    onValueChange = {
-                        viewModel.onEvent(AddEditNoteEvent.PutContent(it))
-                    },
-                    onFocusChange = {
-                        viewModel.onEvent(AddEditNoteEvent.ChangeContentFocus(it))
-                    },
-                    isHintVisible = contentState.value.isHintVisible,
-                    textStyle = MaterialTheme.typography.body1,
-                    modifier = Modifier.fillMaxSize()
-                )
+                    )
+                }
             }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // 标题和内容
+            TransparentHintTextField(
+                text = titleState.value.text,
+                hint = titleState.value.hint,
+                onValueChange = {
+                    viewModel.onEvent(AddEditNoteEvent.PutTitle(it))
+                },
+                onFocusChange = {
+                    viewModel.onEvent(AddEditNoteEvent.ChangeTitleFocus(it))
+                },
+                isHintVisible = titleState.value.isHintVisible,
+                singleLine = true,
+                textStyle = MaterialTheme.typography.h5
+            )
+
+            drawLine(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 5.dp, vertical = 16.dp)
+            )
+
+            TransparentHintTextField(
+                text = contentState.value.text,
+                hint = contentState.value.hint,
+                onValueChange = {
+                    viewModel.onEvent(AddEditNoteEvent.PutContent(it))
+                },
+                onFocusChange = {
+                    viewModel.onEvent(AddEditNoteEvent.ChangeContentFocus(it))
+                },
+                isHintVisible = contentState.value.isHintVisible,
+                textStyle = MaterialTheme.typography.body1,
+                modifier = Modifier.fillMaxSize()
+            )
         }
     }
 }
@@ -211,4 +205,17 @@ fun Modifier.advancedShadow(
             paint
         )
     }
+}
+
+@Composable
+fun drawLine(modifier: Modifier = Modifier) {
+    Canvas(modifier = modifier, onDraw = {
+        drawLine(
+            start = Offset(0f, size.height),
+            end = Offset(size.width, size.height),
+            color = Color.Gray,
+            strokeWidth = 6f,
+            pathEffect = PathEffect.cornerPathEffect(4.0f)
+        )
+    })
 }

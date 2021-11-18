@@ -1,10 +1,7 @@
 package com.jesen.cleanarchitecture.feature_note.presentation.notes.components
 
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
@@ -12,6 +9,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import com.jesen.cleanarchitecture.feature_note.domain.model.NoteModel
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
@@ -27,7 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.graphics.ColorUtils
 
 @Composable
-fun NoteItem(
+fun NoteItemView(
     note: NoteModel,
     modifier: Modifier = Modifier,
     cornerRadius: Dp = 10.dp,
@@ -72,14 +70,27 @@ fun NoteItem(
         ) {
             Text(
                 text = note.title,
-                style = MaterialTheme.typography.body1,
+                style = MaterialTheme.typography.h6,
                 color = MaterialTheme.colors.onSurface,
-                maxLines = 10,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
+            )
+            Spacer(modifier = Modifier.height(5.dp))
+            Text(
+                text = note.content,
+                style = MaterialTheme.typography.body2,
+                color = MaterialTheme.colors.onSurface,
+                maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
         }
 
-        IconButton(onClick = { /*TODO*/ }) {
+        IconButton(
+            modifier = Modifier
+                .wrapContentSize()
+                .align(Alignment.BottomEnd),
+            onClick = onDeleteClick
+        ) {
             Icon(
                 imageVector = Icons.Outlined.Delete,
                 contentDescription = "Delete it"
