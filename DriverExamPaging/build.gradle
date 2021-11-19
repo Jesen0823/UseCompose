@@ -62,4 +62,20 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
+
+    implementation "androidx.compose.material:material-icons-extended:$compose_version"
+
+    //Retrofit
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+
+    //okHttp
+    implementation 'com.squareup.okhttp3:okhttp:4.9.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.9.0'
+
+    //Coil (Image Uploading)
+    implementation 'com.google.accompanist:accompanist-coil:0.12.0'
+
+    //Paging 3.0
+    implementation 'androidx.paging:paging-compose:1.0.0-alpha10'
 }
