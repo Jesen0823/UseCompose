@@ -8,17 +8,18 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.jesen.driverexampaging.model.Question
 import com.jesen.driverexampaging.net.ExamSource
+import com.jesen.driverexampaging.repository.Repository
 import kotlinx.coroutines.flow.Flow
 
 class ExamViewModel : ViewModel() {
 
-    val questions: Flow<PagingData<Question>> = Pager(
-        PagingConfig(
-            initialLoadSize = 8, // 初始条目
-            prefetchDistance = 1,
+    val examList = Pager(
+        config = PagingConfig(
             pageSize = 4,
+            initialLoadSize = 8, // 第一次加载数量，如果不设置的话是 pageSize * 2
+            prefetchDistance = 2,
         )
     ) {
-        ExamSource()
+        ExamSource(Repository)
     }.flow.cachedIn(viewModelScope)
 }
