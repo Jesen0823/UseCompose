@@ -14,6 +14,7 @@ import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemsIndexed
+import com.google.accompanist.insets.statusBarsHeight
 import com.jesen.driverexampaging.model.Question
 import com.jesen.driverexampaging.viewmodel.ExamViewModel
 
@@ -22,6 +23,7 @@ fun ExamListScreen(
     viewModel: ExamViewModel,
     context: Context
 ) {
+
     val questionList = viewModel.examList.collectAsLazyPagingItems()
 
     when (questionList.loadState.refresh) {

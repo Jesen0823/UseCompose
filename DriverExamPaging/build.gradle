@@ -79,4 +79,9 @@ dependencies {
     //Paging 3.0
     implementation 'androidx.paging:paging-compose:1.0.0-alpha14'
     implementation "androidx.paging:paging-runtime-ktx:3.1.0-rc01"
+
+    // 状态栏相关
+    implementation "com.google.accompanist:accompanist-insets:$accompanist_version"
+    implementation "com.google.accompanist:accompanist-insets-ui:$accompanist_version"
+    implementation "com.google.accompanist:accompanist-systemuicontroller:$accompanist_version"
 }
