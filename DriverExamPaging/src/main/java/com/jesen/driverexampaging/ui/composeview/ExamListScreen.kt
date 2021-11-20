@@ -18,22 +18,27 @@ import com.google.accompanist.insets.statusBarsHeight
 import com.jesen.driverexampaging.model.Question
 import com.jesen.driverexampaging.viewmodel.ExamViewModel
 
+/**
+ * 首页列表加载 ---普通加载，没有下拉刷新，可加载下一页
+ * */
+
 @Composable
 fun ExamListScreen(
     viewModel: ExamViewModel,
     context: Context
 ) {
 
-    val questionList = viewModel.examList.collectAsLazyPagingItems()
+    val collectAsLazyPagingIDataList = viewModel.examList.collectAsLazyPagingItems()
 
-    when (questionList.loadState.refresh) {
+    // 首次加载业务逻辑
+    when (collectAsLazyPagingIDataList.loadState.refresh) {
         is LoadState.NotLoading -> {
             ContentInfoList(
-                questionList = questionList,
+                collectAsLazyPagingIDataList = collectAsLazyPagingIDataList,
                 context = context
             )
         }
-        is LoadState.Error -> ErrorPage() { questionList.refresh() }
+        is LoadState.Error -> ErrorPage() { collectAsLazyPagingIDataList.refresh() }
         is LoadState.Loading -> LoadingPage()
     }
 }
@@ -41,11 +46,11 @@ fun ExamListScreen(
 @Composable
 fun ContentInfoList(
     context: Context,
-    questionList: LazyPagingItems<Question>
+    collectAsLazyPagingIDataList: LazyPagingItems<Question>
 ) {
 
     LazyColumn {
-        itemsIndexed(questionList) { index, question ->
+        itemsIndexed(collectAsLazyPagingIDataList) { index, question ->
             QItemView(
                 index = index,
                 que = question,
@@ -53,9 +58,10 @@ fun ContentInfoList(
             )
         }
 
-        when (questionList.loadState.append) {
+        // 加载下一页业务逻辑
+        when (collectAsLazyPagingIDataList.loadState.append) {
             is LoadState.NotLoading -> {
-                itemsIndexed(questionList) { index, question ->
+                itemsIndexed(collectAsLazyPagingIDataList) { index, question ->
                     QItemView(
                         index = index,
                         que = question,
@@ -64,18 +70,8 @@ fun ContentInfoList(
                 }
             }
             is LoadState.Error -> item {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center,
-                ) {
-                    Button(onClick = {
-                        questionList.retry()
-                    }) {
-                        Text(text = "重试")
-                    }
+                NextPageLoadError {
+                    collectAsLazyPagingIDataList.retry()
                 }
             }
             LoadState.Loading -> item {

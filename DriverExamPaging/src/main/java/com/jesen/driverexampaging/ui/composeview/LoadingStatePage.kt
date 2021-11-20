@@ -24,7 +24,14 @@ import androidx.compose.ui.unit.dp
 import com.jesen.driverexampaging.R
 import com.jesen.driverexampaging.ui.theme.RedPink
 
+/**
+ * ExamListScreen 对应动效
+ * */
 
+
+/**
+ * 页面加载失败重试
+ * */
 @Composable
 fun ErrorPage(onclick: () -> Unit = {}) {
     Column(
@@ -47,27 +54,54 @@ fun ErrorPage(onclick: () -> Unit = {}) {
     }
 }
 
+/**
+ * 加载中动效
+ * */
 @Composable
 fun LoadingPage() {
-    val animator by rememberInfiniteTransition().animateFloat(
-        initialValue = 30f,
-        targetValue = 360f,
-        animationSpec = infiniteRepeatable(
-            tween(500, easing = LinearEasing),
-            repeatMode = RepeatMode.Restart
-        )
-    )
-    Canvas(modifier = Modifier.fillMaxSize()) {
-        translate(80f, 80f) {
-            drawArc(
-                RedPink,
-                0f,
-                animator,
-                false,
-                size = Size(80 * 2f, 80 * 2f),
-                style = Stroke(4f),
-                alpha = 0.6f
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(170.dp), contentAlignment = Alignment.Center
+    ) {
+        val animator by rememberInfiniteTransition().animateFloat(
+            initialValue = 0f,
+            targetValue = 360f,
+            animationSpec = infiniteRepeatable(
+                tween(800, easing = LinearEasing),
+                repeatMode = RepeatMode.Restart
             )
+        )
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            translate(80f, 80f) {
+                drawArc(
+                    color = RedPink,
+                    startAngle = 0f,
+                    sweepAngle = animator,
+                    useCenter = false,
+                    size = Size(80 * 2f, 80 * 2f),
+                    style = Stroke(12f),
+                    alpha = 0.6f,
+                )
+            }
+        }
+    }
+}
+
+/**
+ * 加载下一页失败
+ * */
+@Composable
+fun NextPageLoadError(onClick: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center,
+    ) {
+        Button(onClick = onClick) {
+            Text(text = "重试")
         }
     }
 }

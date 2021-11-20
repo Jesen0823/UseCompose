@@ -5,6 +5,7 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.jesen.driverexampaging.model.Question
 import com.jesen.driverexampaging.repository.Repository
+import kotlinx.coroutines.delay
 
 class ExamSource(private val repository: Repository) : PagingSource<Int, Question>() {
 
@@ -22,11 +23,11 @@ class ExamSource(private val repository: Repository) : PagingSource<Int, Questio
             Log.d(TAG, "currentPage: $currentPage")
             Log.d(TAG, "pageSize: $pageSize")
 
+            delay(3000)
             val responseList = repository.getExamList(currentPage, pageSize = pageSize)
                 .result?.resultData?.questionList ?: emptyList<Question>()
 
             // 加载分页
-
             val everyPageSize = 4
             val initPageSize = 8
             val preKey = if (currentPage == 1) null else currentPage.minus(1)

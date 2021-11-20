@@ -20,8 +20,12 @@ import kotlinx.coroutines.flow.collectLatest
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.insets.*
+import com.jesen.driverexampaging.ui.composeview.RefreshExamListScreen
 
 class MainActivity : ComponentActivity() {
+
+    // 有两种加载模式：带下拉刷新效果 or 不带下拉刷新效果
+    private val isUseRefreshMode = false
 
     private val viewModel by viewModels<ExamViewModel>()
 
@@ -55,10 +59,19 @@ class MainActivity : ComponentActivity() {
                                         .statusBarsHeight()
                                         .fillMaxWidth()
                                 )
-                                ExamListScreen(
-                                    viewModel = viewModel,
-                                    context = this@MainActivity
-                                )
+                                if (isUseRefreshMode) {
+                                    // 下拉刷新加载
+                                    RefreshExamListScreen(
+                                        viewModel = viewModel,
+                                        context = this@MainActivity,
+                                    )
+                                } else {
+                                    // 普通加载
+                                    ExamListScreen(
+                                        viewModel = viewModel,
+                                        context = this@MainActivity
+                                    )
+                                }
                             }
                         }
                     }

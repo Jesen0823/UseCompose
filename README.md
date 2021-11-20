@@ -109,4 +109,29 @@ first  study in Jetpack Compose
     | <img src="./capture/11-20_171011.jpg" alt="未修改" style="zoom:50%;" /> | <img src="./capture/11-20_171902.jpg" alt="FitsSystemWindows" style="zoom:50%;" /> | <img src="./capture/11-20_173513.jpg" alt="改变颜色" style="zoom:50%;" /> | <img src="./capture/11-20_184244.jpg" alt="适配高度" style="zoom:50%;" /> |
 
 
+### 下拉刷新
+
+ 构建错误：是com.google.accompanist:accompanist:xxx 相关库的版本不兼容，需要依赖相同的版本
+
+```shell
+   21:35:51.503 7789-7789/com.jesen.driverexampaging E/AndroidRuntime: FATAL EXCEPTION: main
+       Process: com.jesen.driverexampaging, PID: 7789
+       java.lang.NoSuchMethodError: No interface method startReplaceableGroup(ILjava/lang/String;)V in class Landroidx/compose/runtime/Composer; or its super classes (declaration of 'androidx.compose.runtime.Composer' appears in /data/app/~~4FT0iYbXWuoHva-X3Y0lBg==/com.jesen.driverexampaging-4uB2hZ7cDclbzM5qgmkttA==/base.apk)
+           at com.google.accompanist.swiperefresh.SwipeRefreshKt.rememberSwipeRefreshState(Unknown Source:5)
+           at com.jesen.driverexampaging.common.SwipeRefreshListKt.SwipeRefreshList(SwipeRefreshList.kt:31)
+           at com.jesen.driverexampaging.ui.composeview.RefreshExamListScreenKt.RefreshExamListScreen(RefreshExamListScreen.kt:33)
+           at com.jesen.driverexampaging.Main2Activity$onCreate$1$1$1$1$1.invoke(Main2Activity.kt:54)
+           at com.jesen.driverexampaging.Main2Activity$onCreate$1$1$1$1$1.invoke(Main2Activity.kt:47)
+           at androidx.compose.runtime.internal.ComposableLambdaImpl.invoke(ComposableLambda.jvm.kt:116)
+           at androidx.compose.runtime.internal.ComposableLambdaImpl.invoke(ComposableLambda.jvm.kt:34)
+           at androidx.compose.material.ScaffoldKt$ScaffoldLayout$1$1$1$bodyContentPlaceables$1.invoke(Scaffold.kt:316)
+           at androidx.compose.material.ScaffoldKt$ScaffoldLayout$1$1$1$bodyContentPlaceables$1.invoke(Scaffold.kt:314)
+```
+   1. 效果 ：
+   <img src="./capture/11-20_225027.gif" alt="下拉刷新效果" style="zoom:50%;" />
+
+
+
+
+
 

@@ -84,4 +84,7 @@ dependencies {
     implementation "com.google.accompanist:accompanist-insets:$accompanist_version"
     implementation "com.google.accompanist:accompanist-insets-ui:$accompanist_version"
     implementation "com.google.accompanist:accompanist-systemuicontroller:$accompanist_version"
+
+    // 下拉刷新
+    implementation "com.google.accompanist:accompanist-swiperefresh:$accompanist_version"
 }

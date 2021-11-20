@@ -31,6 +31,10 @@ import com.jesen.driverexampaging.model.Question
 import com.jesen.driverexampaging.ui.theme.*
 import org.intellij.lang.annotations.JdkConstants
 
+/**
+ * 题目卡片
+ * */
+
 @Composable
 fun QItemView(que: Question?, onClick: () -> Unit, index: Int) {
 
@@ -137,7 +141,9 @@ fun QItemView(que: Question?, onClick: () -> Unit, index: Int) {
     }
 }
 
-
+/**
+ * 题目答案解析
+ * */
 @Composable
 fun ChildResult(explain: String?, visible: Boolean) {
     AnimatedVisibility(
