@@ -21,6 +21,71 @@ first  study in Jetpack Compose
 | <img src="./capture/11-20_145409-1.gif" alt="paging分页" style="zoom:80%;" /> | <img src="./capture/11-20_152428-1.gif" alt="CA" style="zoom:80%;" /> |      |
 | Paging3+ MVVM + compose+retrofit+LazyColumn                  | dagger:hilt+navigation+room+compose+mvvm+                    |      |
 
+
+### Paging3分页加载
+
+    1. 引入依赖：
+      ```groovy
+      //Paging 3.0
+      implementation 'androidx.paging:paging-compose:1.0.0-alpha14'
+      implementation "androidx.paging:paging-runtime-ktx:3.1.0-rc01"
+      ```
+    2. Paging实现分页加载，简单快捷可定制，内部管理了分页逻辑和异常处理，而分页规则需要自己定义。主要代码：
+
+      ```kotlin
+
+      class ExamSource(private val repository: Repository) : PagingSource<Int, Question>() {
+
+          private val TAG = "--ExamSource"
+
+          override fun getRefreshKey(state: PagingState<Int, Question>): Int? {
+              return null
+          }
+
+          override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Question> {
+
+              return try {
+                  val currentPage = params.key ?: 1
+                  val pageSize = params.loadSize
+                  Log.d(TAG, "currentPage: $currentPage")
+                  Log.d(TAG, "pageSize: $pageSize")
+
+                  // 传入当前页码，每页大小，然后请求数据。网络请求封装在repository
+                  val responseList = repository.getExamList(currentPage, pageSize = pageSize)
+                      .result?.resultData?.questionList ?: emptyList<Question>()
+
+                  // 加载分页
+                  val everyPageSize = 4
+                  val initPageSize = 8
+                  // 前一页
+                  val preKey = if (currentPage == 1) null else currentPage.minus(1)
+                  // 下一页
+                  var nextKey: Int? = if (currentPage == 1) {
+                      initPageSize / everyPageSize
+                  } else {
+                      currentPage.plus(1)
+                  }
+                  Log.d(TAG, "preKey: $preKey")
+                  Log.d(TAG, "nextKey: $nextKey")
+                  if (responseList.isEmpty()) {
+                      nextKey = null
+                  }
+                  Log.d(TAG, "final nextKey: $nextKey")
+
+                  LoadResult.Page(
+                      data = responseList,
+                      prevKey = preKey,
+                      nextKey = nextKey
+                  )
+              } catch (e: Exception) {
+                  e.printStackTrace()
+                  LoadResult.Error(e)
+              }
+          }
+      }
+      ```
+
+
 ### 沉浸式状态栏
 
   ```groovy
