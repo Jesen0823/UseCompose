@@ -1,4 +1,4 @@
-package com.jesen.composeexoplay
+package com.jesen.composeslideexoplay
 
 import org.junit.Test
 
