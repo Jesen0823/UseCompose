@@ -130,6 +130,296 @@ first  study in Jetpack Compose
    1. 效果 ：
    <img src="./capture/11-20_225027.gif" alt="下拉刷新效果" style="zoom:50%;" />
 
+   2. 基本用法：
+
+      * 接入依赖：
+        ```groovy
+        // 下拉刷新
+            implementation "com.google.accompanist:accompanist-swiperefresh:0.21.2-beta"
+        ```
+
+      * 设置下拉刷新加载更多并判断状态
+
+        ```kotlin
+        @Composable
+        fun refreshLoadUse(viewModel: ExamViewModel) {
+            // Swipe 的状态
+            val refreshState = rememberSwipeRefreshState(isRefreshing = false)
+            val collectAsLazyPagingItems = viewModel.examList.collectAsLazyPagingItems()
+
+            SwipeRefresh(state = refreshState, onRefresh = {
+                collectAsLazyPagingItems.refresh()
+            }) {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight(),
+                    content = {
+                        itemsIndexed(collectAsLazyPagingItems) { _, refreshData ->//每个item的展示
+                            Box(
+                                modifier = Modifier
+                                    .padding(horizontal = 14.dp, vertical = 4.dp)
+                                    .fillMaxWidth()
+                                    .height(50.dp)
+                                    .background(Color.Green, shape = RoundedCornerShape(8.dp))
+                                    .border(
+                                        width = 1.dp,
+                                        color = Color.Red,
+                                        shape = RoundedCornerShape(8.dp)
+                                    )
+                                    .padding(start = 10.dp),
+                                contentAlignment = Alignment.CenterStart
+                            ) {
+                                Text(text = refreshData?.data ?: "")
+                            }
+                        }
+                        // append 标识非第一页，也就是指下一页或加载更多
+                        when (collectAsLazyPagingItems.loadState.append) {
+                            is LoadState.Loading -> {
+                                //加载中的尾部item展示
+                                item {
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .height(50.dp),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(text = "加载中。。。")
+                                    }
+                                }
+                            }
+                            is LoadState.Error -> {
+                                //更多，加载错误展示的尾部item
+                                item {
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .height(50.dp),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(text = "--加载错误--")
+                                    }
+                                }
+                            }
+                        }
+                    }
+                )
+            }
+        }
+        ```
+   3. 简单封装
+      参数1：LazyPagingItems包装的请求结果，可以存储在ViewModel,从ViewMode获取
+      参数2：列表内容 listContent 需要外部传入需要携带上下文LazyListScope，可复用
+
+      ```kotlin
+      /**
+       * 下拉加载封装
+       *
+       * implementation "com.google.accompanist:accompanist-swiperefresh:xxx"
+       * */
+      @Composable
+      fun <T : Any> SwipeRefreshList(
+          collectAsLazyPagingItems: LazyPagingItems<T>,
+          listContent: LazyListScope.() -> Unit,
+      ) {
+
+          val rememberSwipeRefreshState = rememberSwipeRefreshState(isRefreshing = false)
+
+          SwipeRefresh(
+              state = rememberSwipeRefreshState,
+              onRefresh = { collectAsLazyPagingItems.refresh() }
+          ) {
+
+              rememberSwipeRefreshState.isRefreshing =
+                  collectAsLazyPagingItems.loadState.refresh is LoadState.Loading
+
+              LazyColumn(
+                  modifier = Modifier
+                      .fillMaxWidth()
+                      .fillMaxHeight(),
+
+                  ) {
+                  listContent()
+                  collectAsLazyPagingItems.apply {
+                      when {
+                          loadState.append is LoadState.Loading -> {
+                              //加载更多，底部loading
+                              item { LoadingItem() }
+                          }
+                          loadState.append is LoadState.Error -> {
+                              //加载更多异常
+                              item {
+                                  ErrorMoreRetryItem() {
+                                      collectAsLazyPagingItems.retry()
+                                  }
+                              }
+                          }
+                          loadState.refresh is LoadState.Error -> {
+                              if (collectAsLazyPagingItems.itemCount <= 0) {
+                                  //刷新的时候，如果itemCount小于0，第一次加载异常
+                                  item {
+                                      ErrorContent() {
+                                          collectAsLazyPagingItems.retry()
+                                      }
+                                  }
+                              } else {
+                                  item {
+                                      ErrorMoreRetryItem() {
+                                          collectAsLazyPagingItems.retry()
+                                      }
+                                  }
+                              }
+                          }
+                          loadState.refresh is LoadState.Loading -> {
+                              // 第一次加载且正在加载中
+                              if (collectAsLazyPagingItems.itemCount == 0) {
+                              }
+                          }
+                      }
+                  }
+
+              }
+          }
+      }
+
+      /**
+       * 底部加载更多失败处理
+       * */
+      @Composable
+      fun ErrorMoreRetryItem(retry: () -> Unit) {
+          Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+              TextButton(
+                  onClick = { retry() },
+                  modifier = Modifier
+                      .padding(20.dp)
+                      .width(80.dp)
+                      .height(30.dp),
+                  shape = RoundedCornerShape(6.dp),
+                  contentPadding = PaddingValues(3.dp),
+                  colors = textButtonColors(backgroundColor = gray300),
+                  elevation = elevation(
+                      defaultElevation = 2.dp,
+                      pressedElevation = 4.dp,
+                  ),
+              ) {
+                  Text(text = "请重试", color = gray600)
+              }
+          }
+      }
+
+      /**
+       * 页面加载失败处理
+       * */
+      @Composable
+      fun ErrorContent(retry: () -> Unit) {
+          Column(
+              modifier = Modifier
+                  .fillMaxSize()
+                  .padding(top = 100.dp),
+              verticalArrangement = Arrangement.Center,
+              horizontalAlignment = Alignment.CenterHorizontally
+          ) {
+              Image(
+                  modifier = Modifier.padding(top = 80.dp),
+                  painter = painterResource(id = R.drawable.ic_default_empty),
+                  contentDescription = null
+              )
+              Text(text = "请求失败，请检查网络", modifier = Modifier.padding(8.dp))
+              TextButton(
+                  onClick = { retry() },
+                  modifier = Modifier
+                      .padding(20.dp)
+                      .width(80.dp)
+                      .height(30.dp),
+                  shape = RoundedCornerShape(10.dp),
+                  contentPadding = PaddingValues(5.dp),
+                  colors = textButtonColors(backgroundColor = gray300),
+                  elevation = elevation(
+                      defaultElevation = 2.dp,
+                      pressedElevation = 4.dp,
+                  )
+                  //colors = ButtonDefaults
+              ) { Text(text = "重试", color = gray700) }
+          }
+      }
+
+      /**
+       * 底部加载更多正在加载中...
+       * */
+      @Composable
+      fun LoadingItem() {
+          Row(
+              modifier = Modifier
+                  .height(34.dp)
+                  .fillMaxWidth()
+                  .padding(5.dp),
+              horizontalArrangement = Arrangement.Center
+          ) {
+              CircularProgressIndicator(
+                  modifier = Modifier
+                      .size(24.dp),
+                  color = gray600,
+                  strokeWidth = 2.dp
+              )
+              Text(
+                  text = "加载中...",
+                  color = gray600,
+                  modifier = Modifier
+                      .fillMaxHeight()
+                      .padding(start = 20.dp),
+                  fontSize = 18.sp,
+              )
+          }
+      }
+      ```
+      * 用法：
+
+         1. 列表布局：
+            ```kotlin
+            /**
+             * 首页列表加载 ---下拉刷新，加载更多动效
+             * */
+            @Composable
+            fun RefreshExamListScreen(
+                viewModel: ExamViewModel,
+                context: Context,
+            ) {
+
+                val collectAsLazyPagingIDataList = viewModel.examList.collectAsLazyPagingItems()
+
+                SwipeRefreshList(
+                    collectAsLazyPagingItems = collectAsLazyPagingIDataList
+                ) {
+
+                    itemsIndexed(collectAsLazyPagingIDataList) { index, data ->
+                        // 列表Item
+                        QItemView(
+                            index = index,
+                            que = data,
+                            onClick = { Toast.makeText(context, "ccc", Toast.LENGTH_SHORT).show() },
+                        )
+                    }
+                }
+            }
+            ```
+
+         2. ViewModel,包括Paging3的配置:
+           ```kotlin
+           class ExamViewModel : ViewModel() {
+
+               val examList = Pager(
+                   config = PagingConfig(
+                       pageSize = 4,    // 每一页个数
+                       initialLoadSize = 8, // 第一次加载数量，如果不设置的话是 pageSize * 2
+                       prefetchDistance = 2, // 距离下一页请求的距离
+                   )
+               ) {
+                   // 此类处理了分页功能
+                   ExamSource(Repository)
+               }.flow.cachedIn(viewModelScope)
+           }
+           ```
+
 
 
 
