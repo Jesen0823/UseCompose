@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/constraint"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/back_play"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@null"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:paddingTop="16dp"
+        android:paddingStart="12dp"
+        android:src="@drawable/play_arrow_back_24" />
+
+    <ImageView
+        android:id="@+id/tv_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@null"
+        app:layout_constraintEnd_toStartOf="@id/more_btn"
+        app:layout_constraintTop_toTopOf="parent"
+        android:paddingTop="20dp"
+        android:layout_marginEnd="10dp"
+        app:layout_constraintBaseline_toBaselineOf="@id/back_play"
+        android:src="@drawable/play_live_tv_24" />
+
+    <ImageView
+        android:id="@+id/more_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@null"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:paddingTop="20dp"
+        android:paddingEnd="12dp"
+        app:layout_constraintBaseline_toBaselineOf="@id/back_play"
+        android:src="@drawable/play_more_vert_24" />
+
+    <LinearLayout
+        android:id="@+id/controller_bottom_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:paddingHorizontal="8dp"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <ImageView
+            android:id="@+id/exo_play"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@null"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/play_play_arrow_24"
+            app:srcCompat="@drawable/play_play_arrow_24" />
+
+        <ImageView
+            android:id="@+id/exo_pause"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@null"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/play_pause_24"
+            app:srcCompat="@drawable/play_pause_24" />
+
+        <com.google.android.exoplayer2.ui.DefaultTimeBar
+            android:id="@+id/exo_progress"
+            android:layout_width="0dp"
+            android:layout_height="15dp"
+            android:layout_marginRight="16dp"
+            app:bar_height="2dp"
+            app:unplayed_color="@color/gray_600"
+            app:played_color="@color/bili_90"
+            app:scrubber_color="@color/bili_50"
+            app:buffered_color="@color/bili_50"
+            android:layout_weight="1"
+            android:layout_gravity="center_vertical" />
+
+        <TextView
+            android:id="@+id/exo_position"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:contentDescription="@null"
+            android:text="1"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            android:layout_gravity="center_vertical" />
+
+        <TextView
+            android:id="@+id/splash_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="1dp"
+            android:contentDescription="@null"
+            android:text="/"
+            android:textColor="@color/gray_600"
+            android:textSize="12sp"
+            android:layout_gravity="center_vertical"
+            tools:text="/" />
+
+        <TextView
+            android:id="@+id/exo_duration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="1dp"
+            android:contentDescription="@null"
+            android:text="1"
+            android:textColor="@color/gray_600"
+            android:textSize="12sp"
+            android:layout_marginRight="8dp"
+            android:layout_gravity="center_vertical" />
+
+        <ImageView
+            android:id="@+id/full_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@null"
+            android:padding="10dp"
+            android:src="@drawable/play_fullscreen_24"
+            app:srcCompat="@drawable/play_fullscreen_24"
+            android:layout_gravity="center_vertical" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

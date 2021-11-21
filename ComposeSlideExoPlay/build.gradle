@@ -85,4 +85,7 @@ dependencies {
 
     // 下拉刷新
     implementation "com.google.accompanist:accompanist-swiperefresh:$accompanist_version"
+
+    // exoPlayer
+    implementation 'com.google.android.exoplayer:exoplayer:2.15.1'
 }
