@@ -25,7 +25,7 @@ import com.jesen.driverexampaging.ui.composeview.RefreshExamListScreen
 class MainActivity : ComponentActivity() {
 
     // 有两种加载模式：带下拉刷新效果 or 不带下拉刷新效果
-    private val isUseRefreshMode = false
+    private val isUseRefreshMode = true
 
     private val viewModel by viewModels<ExamViewModel>()
 
