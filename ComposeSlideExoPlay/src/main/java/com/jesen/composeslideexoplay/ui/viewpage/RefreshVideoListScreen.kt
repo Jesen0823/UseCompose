@@ -3,9 +3,11 @@ package com.jesen.composeslideexoplay.ui.viewpage
 import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemsIndexed
 import com.jesen.composeslideexoplay.init.SwipeRefreshLayout
@@ -23,15 +25,21 @@ fun RefreshVideoListScreen(
 
     val collectAsLazyPagingIDataList = viewModel.videoItemList.collectAsLazyPagingItems()
 
+    val lazyListState = rememberLazyListState()
+    val focusIndex by derivedStateOf { lazyListState.firstVisibleItemIndex }
+
+
     SwipeRefreshLayout(
+        columnState = lazyListState,
         collectAsLazyPagingItems = collectAsLazyPagingIDataList
     ) {
 
         itemsIndexed(collectAsLazyPagingIDataList) { index, data ->
             VideoCardItem(
-                index = index,
                 videoItem = data!!,
+                isFocused = index == focusIndex,
                 onClick = { Toast.makeText(context, "ccc", Toast.LENGTH_SHORT).show() },
+                index = index
             )
         }
     }

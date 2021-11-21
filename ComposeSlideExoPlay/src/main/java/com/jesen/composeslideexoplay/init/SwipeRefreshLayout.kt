@@ -4,6 +4,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.ButtonDefaults.elevation
@@ -31,6 +33,7 @@ import com.jesen.composeslideexoplay.ui.theme.gray700
  * */
 @Composable
 fun <T : Any> SwipeRefreshLayout(
+    columnState: LazyListState?,
     collectAsLazyPagingItems: LazyPagingItems<T>,
     listContent: LazyListScope.() -> Unit,
 ) {
@@ -46,6 +49,7 @@ fun <T : Any> SwipeRefreshLayout(
             collectAsLazyPagingItems.loadState.refresh is LoadState.Loading
 
         LazyColumn(
+            state = columnState ?: rememberLazyListState(),
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight(),
