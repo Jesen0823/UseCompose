@@ -8,6 +8,9 @@ import com.google.android.exoplayer2.upstream.cache.CacheDataSink
 import com.google.android.exoplayer2.upstream.cache.CacheDataSource
 import com.google.android.exoplayer2.util.Util
 
+/**
+ * 设置缓存策略
+ * */
 object VideoDataSourceHolder {
     private var cacheDataSourceFactory: CacheDataSource.Factory? = null
     private var defaultDataSourceFactory: DataSource.Factory? = null
@@ -18,8 +21,11 @@ object VideoDataSourceHolder {
             val defaultFactory = getDefaultFactory(context)
             cacheDataSourceFactory = CacheDataSource.Factory()
                 .setCache(simpleCache)
+                // 设置Uri协议相关参数，用来从缓存做读取操作
                 .setUpstreamDataSourceFactory(defaultFactory)
+                // 设置CacheDataSource工厂类型，用来读取缓存
                 .setCacheReadDataSourceFactory(FileDataSource.Factory())
+                // 缓存写入设置
                 .setCacheWriteDataSinkFactory(
                     CacheDataSink.Factory()
                         .setCache(simpleCache)

@@ -12,6 +12,4 @@
     app:shutter_background_color="@android:color/black"
     app:surface_type="surface_view"
     app:use_controller="true"
-    app:controller_layout_id="@layout/player_controller_layout"
-
-    />
+    app:controller_layout_id="@layout/player_controller_layout" />

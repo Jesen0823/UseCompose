@@ -1,6 +1,7 @@
 package com.jesen.composeslideexoplay.ui.viewpage
 
 import android.net.Uri
+import android.util.Log
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.compose.foundation.Image
@@ -34,10 +35,17 @@ import com.jesen.composeslideexoplay.model.VideoInfo
 import com.jesen.composeslideexoplay.model.VideoItem
 import com.jesen.composeslideexoplay.ui.theme.gray300
 import com.jesen.composeslideexoplay.ui.theme.gray600
+import com.jesen.composeslideexoplay.viewmodel.MainViewModel
 
 @ExperimentalCoilApi
 @Composable
-fun VideoCardItem(videoItem: VideoItem, isFocused: Boolean, onClick: () -> Unit, index: Int) {
+fun VideoCardItem(
+    videoItem: VideoItem,
+    isFocused: Boolean,
+    onClick: () -> Unit,
+    index: Int,
+    viewModel: MainViewModel?
+) {
     Surface {
         Card(
             modifier = Modifier
@@ -63,7 +71,7 @@ fun VideoCardItem(videoItem: VideoItem, isFocused: Boolean, onClick: () -> Unit,
                     color = gray600
                 )
                 if (isFocused) {
-                    ExoPlayerView(isFocused, videoInfo)
+                    ExoPlayerView(isFocused, videoInfo, viewModel)
                 } else {
                     // 截断以下图片Url
                     val coverUrl = videoInfo?.cover?.feed?.substringBefore('?')
@@ -81,7 +89,7 @@ fun VideoCardItem(videoItem: VideoItem, isFocused: Boolean, onClick: () -> Unit,
 
 @ExperimentalCoilApi
 @Composable
-fun ExoPlayerView(isFocused: Boolean, videoInfo: VideoInfo?) {
+fun ExoPlayerView(isFocused: Boolean, videoInfo: VideoInfo?, viewModel: MainViewModel?) {
 
     val context = LocalContext.current
     // 获取播放器实例
@@ -114,14 +122,20 @@ fun ExoPlayerView(isFocused: Boolean, videoInfo: VideoInfo?) {
             modifier = Modifier.aspectRatio(width.toFloat() / height),
             factory = { context ->
                 val frameLayout = FrameLayout(context)
-                frameLayout.setBackgroundColor(context.getColor(android.R.color.holo_blue_bright))
+                frameLayout.setBackgroundColor(context.getColor(android.R.color.holo_purple))
                 frameLayout
             },
             update = { frameLayout ->
+                Log.d("xxx--", "update")
                 frameLayout.removeAllViews()
                 if (isFocused) {
                     playerView = PlayerViewManager.get(frameLayout.context)
+
+                    val curItem = frameLayout.parent
+                    viewModel?.saveCurrentCard(curItem)
+
                     // 切换播放器布局
+
                     PlayerView.switchTargetView(
                         exoPlayer,
                         PlayerViewManager.currentPlayerView,
@@ -141,6 +155,8 @@ fun ExoPlayerView(isFocused: Boolean, videoInfo: VideoInfo?) {
                         FrameLayout.LayoutParams.MATCH_PARENT,
                         FrameLayout.LayoutParams.MATCH_PARENT
                     )
+                    viewModel?.saveFrameLayout(frameLayout)
+
                 } else if (playerView != null) {
                     playerView?.apply {
                         (parent as? ViewGroup)?.removeView(this)
@@ -153,6 +169,7 @@ fun ExoPlayerView(isFocused: Boolean, videoInfo: VideoInfo?) {
 
         DisposableEffect(key1 = videoInfo?.playUrl) {
             onDispose {
+                Log.d("xxx---", "--onDispose")
                 if (isFocused) {
                     playerView?.apply {
                         (parent as? ViewGroup)?.removeView(this)

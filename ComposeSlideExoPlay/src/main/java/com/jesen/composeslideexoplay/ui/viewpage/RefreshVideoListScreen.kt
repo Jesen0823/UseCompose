@@ -2,9 +2,7 @@ package com.jesen.composeslideexoplay.ui.viewpage
 
 import android.content.Context
 import android.widget.Toast
-import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -12,7 +10,6 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemsIndexed
 import com.jesen.composeslideexoplay.init.SwipeRefreshLayout
 import com.jesen.composeslideexoplay.viewmodel.MainViewModel
-import java.lang.reflect.Modifier
 
 /**
  * 首页列表加载 ---下拉刷新，加载更多动效
@@ -39,7 +36,8 @@ fun RefreshVideoListScreen(
                 videoItem = data!!,
                 isFocused = index == focusIndex,
                 onClick = { Toast.makeText(context, "ccc", Toast.LENGTH_SHORT).show() },
-                index = index
+                index = index,
+                viewModel = viewModel
             )
         }
     }
