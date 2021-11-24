@@ -6,12 +6,15 @@ import com.google.android.exoplayer2.DefaultLoadControl
 import com.google.android.exoplayer2.PlaybackException
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
+import com.google.android.exoplayer2.video.VideoSize
+import com.jesen.composeslideexoplay.util.logD
 
 /**
  * 播放器实例创建
  * */
 object ExoPlayerHolder {
     private var exoplayer: SimpleExoPlayer? = null
+    private const val TAG = "ExoPlayer--xxx"
 
     fun get(context: Context): SimpleExoPlayer {
         if (exoplayer == null) {
@@ -21,6 +24,17 @@ object ExoPlayerHolder {
             override fun onPlayerError(error: PlaybackException) {
                 super.onPlayerError(error)
                 Toast.makeText(context, error.message, Toast.LENGTH_SHORT).show()
+                logD("onPlayerError：${error.errorCode} ,${error.message}")
+            }
+
+            override fun onVideoSizeChanged(videoSize: VideoSize) {
+                super.onVideoSizeChanged(videoSize)
+                logD("onVideoSizeChanged：${videoSize.width} x ${videoSize.height} | ratio: ${videoSize.pixelWidthHeightRatio}")
+            }
+
+            override fun onSurfaceSizeChanged(width: Int, height: Int) {
+                super.onSurfaceSizeChanged(width, height)
+                logD("onSurfaceSizeChanged：$width x $height")
             }
         })
         return exoplayer!!

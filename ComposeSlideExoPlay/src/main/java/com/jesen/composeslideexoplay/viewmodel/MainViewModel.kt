@@ -1,24 +1,22 @@
 package com.jesen.composeslideexoplay.viewmodel
 
-import android.view.ViewParent
+import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.cachedIn
-import com.jesen.composeslideexoplay.exoplayer.PlayerViewManager
+import com.google.android.exoplayer2.ui.MyPlayerView
 import com.jesen.composeslideexoplay.net.VideoListDataSource
 import com.jesen.composeslideexoplay.repository.Repository
+import com.jesen.composeslideexoplay.util.logD
 
 class MainViewModel() : ViewModel() {
 
-    var frameLayout: FrameLayout? = null
+    private var frameLayout: FrameLayout? = null
 
-    // 默认非全屏
-    //var playerViewMode = PlayViewMode.HALF_SCREEN
-
-    var currentCardItem: ViewParent? = null
+    private var contentRootView: ViewGroup? = null
 
     val videoItemList = Pager(
         config = PagingConfig(
@@ -35,20 +33,18 @@ class MainViewModel() : ViewModel() {
         this.frameLayout = frameLayout
     }
 
-    fun saveCurrentCard(curItem: ViewParent) {
-        currentCardItem = curItem
-    }
-
-    fun removePlayerViewFromLazyList() {
-        frameLayout?.removeView(PlayerViewManager.currentPlayerView)
-
-    }
-
-    fun addPlayerViewToLazyList() {
+    fun addPlayerViewToLazyList(playerView: MyPlayerView?) {
+        logD(" exitFullScreen,  add frameLayout:$frameLayout")
         frameLayout?.addView(
-            PlayerViewManager.currentPlayerView,
+            playerView,
             FrameLayout.LayoutParams.MATCH_PARENT,
             FrameLayout.LayoutParams.MATCH_PARENT
         )
     }
+
+    fun settRootViewGroup(rootView: ViewGroup) {
+        contentRootView = rootView
+    }
+
+    fun getRootViewGroup(): ViewGroup? = contentRootView
 }

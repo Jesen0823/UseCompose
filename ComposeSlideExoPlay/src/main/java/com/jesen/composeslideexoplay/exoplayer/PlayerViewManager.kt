@@ -2,97 +2,164 @@ package com.jesen.composeslideexoplay.exoplayer
 
 import android.content.Context
 import android.content.pm.ActivityInfo
-import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.core.util.Pools
-import androidx.lifecycle.viewModelScope
-import com.google.android.exoplayer2.ui.PlayerView
+import com.google.android.exoplayer2.Player
+import com.google.android.exoplayer2.ui.MyPlayerView
 import com.jesen.composeslideexoplay.MainActivity
 import com.jesen.composeslideexoplay.R
+import com.jesen.composeslideexoplay.util.ExoEventListener
 import com.jesen.composeslideexoplay.util.componentActivity
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import com.jesen.composeslideexoplay.util.logD
+import com.jesen.composeslideexoplay.util.statusBarIsHide
+import com.jesen.composeslideexoplay.viewmodel.MainViewModel
 
 
 /**
  * 用来管理 PlayerView
  * */
-object PlayerViewManager {
+object PlayerViewManager : ExoEventListener {
 
-    var currentPlayerView: PlayerView? = null
-    private var playerViewMode = PlayViewMode.HALF_SCREEN
+    var currentPlayerView: MyPlayerView? = null
 
-    private val playerViewPool = Pools.SimplePool<PlayerView>(2)
+    var playerViewMode = PlayViewMode.HALF_SCREEN
+    var activity: MainActivity? = null
+    var viewModel: MainViewModel? = null
 
-    fun get(context: Context): PlayerView {
+    private val playerViewPool = Pools.SimplePool<MyPlayerView>(2)
+
+    fun get(context: Context): MyPlayerView {
         return playerViewPool.acquire() ?: createPlayerView(context)
     }
 
-    fun release(player: PlayerView) {
+    fun release(player: MyPlayerView) {
         playerViewPool.release(player)
     }
 
-    // 创建PlayerView
-    private fun createPlayerView(context: Context): PlayerView {
+    /**
+     * 创建PlayerView
+     * */
+    private fun createPlayerView(context: Context): MyPlayerView {
         val playView = (LayoutInflater.from(context)
-            .inflate(R.layout.exoplayer_texture_view, null, false) as PlayerView)
+            .inflate(R.layout.exoplayer_texture_view, null, false) as MyPlayerView)
         playView.setShowMultiWindowTimeBar(true)
-        playView.setShowBuffering(PlayerView.SHOW_BUFFERING_ALWAYS)
+        playView.setShowBuffering(MyPlayerView.SHOW_BUFFERING_ALWAYS)
         playView.controllerAutoShow = true
+        playView.playerController.setExoEventListener(this)
 
-        val fullScreenBtn = playView.findViewById<ImageView>(R.id.full_screen_btn)
-        fullScreenBtn.setOnClickListener {
-            switchPlayerViewMode(playView)
-        }
+        initOther(playView)
         return playView
     }
 
-    /**
-     * 全屏切换
-     * */
-    private fun switchPlayerViewMode(playerView: PlayerView) {
-        Log.d("xxx--", "switchPlayerViewMode")
-        val activity = playerView.context.componentActivity
-        val viewModel = (activity as MainActivity).viewModel
-        val contentRootView = activity.findViewById<ViewGroup>(android.R.id.content)
 
-        if (playerViewMode == PlayViewMode.HALF_SCREEN) {
+    /****************************************其他业务*******************************************/
 
-            // 设置为全屏
-            activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
 
-            viewModel.removePlayerViewFromLazyList()
-            val params = ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT
-            )
-            viewModel.viewModelScope.launch {
-                delay(100)
-                contentRootView.addView(playerView, params)
+    private fun initOther(playView: MyPlayerView) {
+        activity = playView.context.componentActivity as MainActivity
+        viewModel = (activity as MainActivity).viewModel
+        val root = activity?.findViewById<ViewGroup>(android.R.id.content)
+        if (root != null) {
+            viewModel?.settRootViewGroup(root)
+        }
+
+        // 返回按钮
+        val backExitBtn = playView.findViewById<ImageView>(R.id.back_play)
+        backExitBtn.setOnClickListener {
+            if (isFullScreen()) {
+                switchPlayerViewMode()
+            } else {
+                activity?.finish()
             }
-            playerViewMode = PlayViewMode.FULL_SCREEN
+        }
+    }
 
-        } else { //退出全屏
-            Log.d("xxx--", "switchPlayerViewMode  set to screen half")
-            // 旋转屏幕
-            activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+    private fun switchPlayerViewMode() {
+        logD("switchPlayerViewMode")
+        activity = currentPlayerView?.context?.componentActivity as MainActivity
+        if (activity?.requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
+            //切换竖屏
+            activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        } else {
+            //切换横屏
+            activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+        }
+    }
 
-            // 将playerView从Activity的R.id.content移除
-            val contentView = activity.findViewById<ViewGroup>(android.R.id.content)
-            contentView.removeView(playerView)
+    fun enterFullScreen() {
+        val contentRootView = activity?.findViewById<ViewGroup>(android.R.id.content)
+        // 隐藏状态栏导航栏
+        activity?.statusBarIsHide(contentRootView as View, true)
+
+        val params = ViewGroup.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.MATCH_PARENT
+        )
+
+        val parent = currentPlayerView?.parent as ViewGroup
+        parent.let {
+            it.removeView(currentPlayerView)
+        }
+        contentRootView?.addView(currentPlayerView, params)
+        logD(" enterFullScreen,  remove parent:$parent, add contentView:$contentRootView")
+
+        playerViewMode = PlayViewMode.FULL_SCREEN
+    }
+
+    fun exitFullScreen(): Boolean {
+        if (isFullScreen()) {
+            logD("switchPlayerViewMode  set to screen half")
+            viewModel?.getRootViewGroup()?.let {
+                // 恢复状态栏显示
+                activity?.statusBarIsHide(it as View, false)
+                // 从根View移除PlayerView
+                it.removeView(currentPlayerView)
+            }
 
             // 然后加入LazyColumn的ItemView下
-            viewModel.viewModelScope.launch {
-                delay(100)
-                viewModel.addPlayerViewToLazyList()
-            }
+            viewModel?.addPlayerViewToLazyList(currentPlayerView)
 
             playerViewMode = PlayViewMode.HALF_SCREEN
+
+            return true
         }
+        return false
+    }
+
+    /**
+     * 全屏处理
+     * */
+    override fun changeFullScreen(player: Player) {
+        switchPlayerViewMode()
+    }
+
+    override fun backExitScreen(player: Player) {
+        if (isFullScreen()) {
+            exitFullScreen()
+        } else {
+            activity?.finish()
+        }
+    }
+
+    /**
+     * 暂停续播
+     * */
+    fun playOrPause(isPause: Boolean) {
+        val playerController = currentPlayerView?.playerController
+        playerController?.let {
+            if (isPause) it.doPause() else it.doPlay()
+        }
+    }
+
+    private fun isFullScreen(): Boolean = playerViewMode == PlayViewMode.FULL_SCREEN
+
+    fun onBackPressed(): Boolean {
+        return exitFullScreen()
     }
 }
 
 
-enum class PlayViewMode { HALF_SCREEN, FULL_SCREEN, TO_FULL, TO_HALF }
+enum class PlayViewMode { HALF_SCREEN, FULL_SCREEN }

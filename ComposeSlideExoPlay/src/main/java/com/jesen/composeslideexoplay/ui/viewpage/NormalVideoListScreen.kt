@@ -25,6 +25,7 @@ import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemsIndexed
+import coil.annotation.ExperimentalCoilApi
 import com.jesen.composeslideexoplay.R
 import com.jesen.composeslideexoplay.model.VideoItem
 import com.jesen.composeslideexoplay.ui.theme.RedPink
@@ -57,6 +58,7 @@ fun NormalVideoListScreen(
     }
 }
 
+@ExperimentalCoilApi
 @Composable
 fun ContentInfoList(
     context: Context,

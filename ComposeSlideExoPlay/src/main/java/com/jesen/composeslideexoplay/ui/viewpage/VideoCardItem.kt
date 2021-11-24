@@ -1,15 +1,16 @@
 package com.jesen.composeslideexoplay.ui.viewpage
 
 import android.net.Uri
-import android.util.Log
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -26,15 +27,17 @@ import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.source.dash.DashMediaSource
 import com.google.android.exoplayer2.source.hls.HlsMediaSource
-import com.google.android.exoplayer2.ui.PlayerView
+import com.google.android.exoplayer2.ui.MyPlayerView
 import com.google.android.exoplayer2.util.Util
 import com.jesen.composeslideexoplay.exoplayer.ExoPlayerHolder
+import com.jesen.composeslideexoplay.exoplayer.PlayViewMode
 import com.jesen.composeslideexoplay.exoplayer.PlayerViewManager
 import com.jesen.composeslideexoplay.exoplayer.VideoDataSourceHolder
 import com.jesen.composeslideexoplay.model.VideoInfo
 import com.jesen.composeslideexoplay.model.VideoItem
 import com.jesen.composeslideexoplay.ui.theme.gray300
 import com.jesen.composeslideexoplay.ui.theme.gray600
+import com.jesen.composeslideexoplay.util.logD
 import com.jesen.composeslideexoplay.viewmodel.MainViewModel
 
 @ExperimentalCoilApi
@@ -46,45 +49,52 @@ fun VideoCardItem(
     index: Int,
     viewModel: MainViewModel?
 ) {
-    Surface {
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 5.dp, top = 5.dp, end = 5.dp, bottom = 5.dp),
-            shape = RoundedCornerShape(10.dp),
-            elevation = 8.dp,
-            backgroundColor = if (isFocused) gray300 else MaterialTheme.colors.surface
+    val videoInfo = videoItem.videoInfo
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 5.dp, top = 5.dp, end = 5.dp, bottom = 5.dp),
+        shape = RoundedCornerShape(10.dp),
+        elevation = 8.dp,
+        backgroundColor = if (isFocused) gray300 else MaterialTheme.colors.surface
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp)
         ) {
-            Column(
-                modifier = Modifier.padding(16.dp)
-            ) {
-                val videoInfo = videoItem.videoInfo
 
-                Text(
-                    text = "$index: ${videoItem.videoInfo?.description}",
-                    style = MaterialTheme.typography.h6
-                )
-                Text(
-                    modifier = Modifier.padding(top = 8.dp),
-                    text = videoItem.videoInfo?.title ?: "",
-                    style = MaterialTheme.typography.body1,
-                    color = gray600
-                )
-                if (isFocused) {
-                    ExoPlayerView(isFocused, videoInfo, viewModel)
-                } else {
-                    // 截断以下图片Url
-                    val coverUrl = videoInfo?.cover?.feed?.substringBefore('?')
-                    CoilImage(
-                        url = coverUrl,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(300.dp)
-                    )
+            Text(
+                text = "$index: ${videoInfo?.description}",
+                style = MaterialTheme.typography.h6
+            )
+            Text(
+                modifier = Modifier.padding(top = 8.dp),
+                text = videoInfo?.title ?: "",
+                style = MaterialTheme.typography.body1,
+                color = gray600
+            )
+            var width = 1280
+            var height = 720
+            videoInfo?.playInfo?.let {
+                if (it.isNotEmpty()) {
+                    width = it[0].width
+                    height = it[0].height
                 }
+            }
+            if (isFocused) {
+                ExoPlayerView(isFocused, videoInfo, viewModel)
+            } else {
+                // 截断以下图片Url
+                val coverUrl = videoInfo?.cover?.feed?.substringBefore('?')
+                CoilImage(
+                    url = coverUrl,
+                    modifier = Modifier
+                        .aspectRatio(width.toFloat() / height)
+                        .fillMaxWidth()
+                )
             }
         }
     }
+
 }
 
 @ExperimentalCoilApi
@@ -94,7 +104,16 @@ fun ExoPlayerView(isFocused: Boolean, videoInfo: VideoInfo?, viewModel: MainView
     val context = LocalContext.current
     // 获取播放器实例
     val exoPlayer = remember { ExoPlayerHolder.get(context = context) }
-    var playerView: PlayerView? = null
+    var playerView: MyPlayerView? = null
+
+    var width = 1280
+    var height = 720
+    videoInfo?.playInfo?.let {
+        if (it.isNotEmpty()) {
+            width = it[0].width
+            height = it[0].height
+        }
+    }
 
     if (isFocused) {
         videoInfo?.let {
@@ -115,8 +134,6 @@ fun ExoPlayerView(isFocused: Boolean, videoInfo: VideoInfo?, viewModel: MainView
             }
         }
 
-        val width = videoInfo?.playInfo?.get(0)?.width ?: 1280
-        val height = videoInfo?.playInfo?.get(0)?.height ?: 720
         AndroidView(
 
             modifier = Modifier.aspectRatio(width.toFloat() / height),
@@ -126,50 +143,48 @@ fun ExoPlayerView(isFocused: Boolean, videoInfo: VideoInfo?, viewModel: MainView
                 frameLayout
             },
             update = { frameLayout ->
-                Log.d("xxx--", "update")
-                frameLayout.removeAllViews()
-                if (isFocused) {
-                    playerView = PlayerViewManager.get(frameLayout.context)
+                logD("update removeAllViews, playerViewMode: ${PlayerViewManager.playerViewMode}, isFocused:$isFocused")
+                if (PlayerViewManager.playerViewMode == PlayViewMode.HALF_SCREEN) {
+                    frameLayout.removeAllViews()
+                    if (isFocused) {
+                        playerView = PlayerViewManager.get(frameLayout.context)
 
-                    val curItem = frameLayout.parent
-                    viewModel?.saveCurrentCard(curItem)
+                        // 切换播放器
+                        MyPlayerView.switchTargetView(
+                            exoPlayer,
+                            PlayerViewManager.currentPlayerView,
+                            playerView
+                        )
+                        PlayerViewManager.currentPlayerView = playerView
 
-                    // 切换播放器布局
+                        playerView?.apply {
+                            player?.playWhenReady = true
+                        }
 
-                    PlayerView.switchTargetView(
-                        exoPlayer,
-                        PlayerViewManager.currentPlayerView,
-                        playerView
-                    )
-                    PlayerViewManager.currentPlayerView = playerView
-
-                    playerView?.apply {
-                        player?.playWhenReady = true
+                        playerView?.apply {
+                            (parent as? ViewGroup)?.removeView(this)
+                        }
+                        frameLayout.addView(
+                            playerView,
+                            FrameLayout.LayoutParams.MATCH_PARENT,
+                            FrameLayout.LayoutParams.MATCH_PARENT
+                        )
+                        viewModel?.saveFrameLayout(frameLayout)
+                        logD("update, frameLayout:$frameLayout")
+                    } else if (playerView != null) {
+                        playerView?.apply {
+                            (parent as? ViewGroup)?.removeView(this)
+                            PlayerViewManager.release(this)
+                        }
+                        playerView = null
                     }
-
-                    playerView?.apply {
-                        (parent as? ViewGroup)?.removeView(this)
-                    }
-                    frameLayout.addView(
-                        playerView,
-                        FrameLayout.LayoutParams.MATCH_PARENT,
-                        FrameLayout.LayoutParams.MATCH_PARENT
-                    )
-                    viewModel?.saveFrameLayout(frameLayout)
-
-                } else if (playerView != null) {
-                    playerView?.apply {
-                        (parent as? ViewGroup)?.removeView(this)
-                        PlayerViewManager.release(this)
-                    }
-                    playerView = null
                 }
             }
         )
 
         DisposableEffect(key1 = videoInfo?.playUrl) {
             onDispose {
-                Log.d("xxx---", "--onDispose")
+                logD("--onDispose, isFocused: $isFocused")
                 if (isFocused) {
                     playerView?.apply {
                         (parent as? ViewGroup)?.removeView(this)
@@ -182,6 +197,30 @@ fun ExoPlayerView(isFocused: Boolean, videoInfo: VideoInfo?, viewModel: MainView
                 }
             }
         }
+    } else {
+        // 在AndroidView中插入Compose UI
+        /*AndroidView(
+           modifier = Modifier.aspectRatio(width.toFloat() / height),
+           factory = { context ->
+               val coverLayout = FrameLayout(context)
+               coverLayout.setBackgroundColor(context.getColor(android.R.color.darker_gray))
+               coverLayout
+           },
+           update = { coverLayout ->
+               val coverUrl = videoInfo?.cover?.feed?.substringBefore('?')
+               coverLayout.addView(ComposeView(context).apply {
+                   //id = R.id.compose_view_y
+                   setContent {
+                       MaterialTheme {
+                           CoilImage(
+                               url = coverUrl,
+                               modifier = Modifier.fillMaxWidth()
+                           )
+                       }
+                   }
+               })
+           }
+        )*/
     }
 }
 
