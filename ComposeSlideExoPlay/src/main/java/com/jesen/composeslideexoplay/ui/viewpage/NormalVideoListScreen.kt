@@ -72,6 +72,7 @@ fun ContentInfoList(
         state = lazyListState
     ) {
         itemsIndexed(collectAsLazyPagingIDataList) { index, videoItem ->
+            // 传入列表卡片Item
             VideoCardItem(
                 videoItem = videoItem!!,
                 isFocused = index == focusIndex,

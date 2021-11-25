@@ -94,7 +94,6 @@ fun VideoCardItem(
             }
         }
     }
-
 }
 
 @ExperimentalCoilApi

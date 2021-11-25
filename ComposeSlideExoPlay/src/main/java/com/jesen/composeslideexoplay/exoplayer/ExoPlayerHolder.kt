@@ -14,7 +14,6 @@ import com.jesen.composeslideexoplay.util.logD
  * */
 object ExoPlayerHolder {
     private var exoplayer: SimpleExoPlayer? = null
-    private const val TAG = "ExoPlayer--xxx"
 
     fun get(context: Context): SimpleExoPlayer {
         if (exoplayer == null) {

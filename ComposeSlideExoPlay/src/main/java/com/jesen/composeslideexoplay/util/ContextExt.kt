@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 
 
 val Context.activity: Activity?
@@ -65,6 +66,8 @@ fun Activity.statusBarIsHide(view: View, enable: Boolean) {
     if (enable) {
         controller?.hide(WindowInsetsCompat.Type.statusBars())
         controller?.hide(WindowInsetsCompat.Type.navigationBars())
+        controller?.systemBarsBehavior =
+            WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
 
         //controller?.hide(WindowInsetsCompat.Type.systemBars())
     } else {
