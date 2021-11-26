@@ -9,7 +9,7 @@ first  study in Jetpack Compose
 | 简单LazyColumn + animateColorAsState                         | LazyColumn+AnimatedVisibility+HomeTab                        | MaterialTheme+TopAppBar+Card+LazyColumn                      |
 
 
-| ui_abstraction                                           | ui_abstraction                                               |      |
+| ui_abstraction                                           | ui_abstraction                                               |       |
 | -------------------------------------------------------- | ------------------------------------------------------------ | ---- |
 | ![](./capture/11-16_142348.jpg) | ![gradLoyout](./capture/11-16_150254.jpg) |      |
 | 基本的LazyColumn  / ConstraintLayout / StaggeredGrid /   | 自定义Layout                                                 |      |
