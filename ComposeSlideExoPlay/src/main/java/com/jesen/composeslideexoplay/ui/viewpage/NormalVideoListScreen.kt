@@ -1,6 +1,7 @@
 package com.jesen.composeslideexoplay.ui.viewpage
 
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
@@ -8,11 +9,15 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
@@ -29,7 +34,10 @@ import coil.annotation.ExperimentalCoilApi
 import com.jesen.composeslideexoplay.R
 import com.jesen.composeslideexoplay.model.VideoItem
 import com.jesen.composeslideexoplay.ui.theme.RedPink
+import com.jesen.composeslideexoplay.ui.theme.gray300
+import com.jesen.composeslideexoplay.ui.theme.gray800
 import com.jesen.composeslideexoplay.viewmodel.MainViewModel
+import kotlinx.coroutines.launch
 
 
 /**
@@ -67,6 +75,7 @@ fun ContentInfoList(
 ) {
     val lazyListState = rememberLazyListState()
     val focusIndex by derivedStateOf { lazyListState.firstVisibleItemIndex }
+    val coroutineScope = rememberCoroutineScope()
 
     LazyColumn(
         state = lazyListState
@@ -83,7 +92,10 @@ fun ContentInfoList(
         }
 
         // 加载下一页业务逻辑
-        when (collectAsLazyPagingIDataList.loadState.append) {
+        val appendState = collectAsLazyPagingIDataList.loadState.append
+        Log.d("xx---", " appendState :${appendState}")
+
+        when (appendState) {
             is LoadState.NotLoading -> {
                 itemsIndexed(collectAsLazyPagingIDataList) { index, videoItem ->
                     VideoCardItem(
@@ -100,8 +112,19 @@ fun ContentInfoList(
                     collectAsLazyPagingIDataList.retry()
                 }
             }
+
             LoadState.Loading -> item {
                 LoadingPageUI()
+            }
+        }
+        if (appendState == LoadState.NotLoading(endOfPaginationReached = true)) {
+            item {
+                NotMoreDataFindUI(onClick = {
+                    // 回滚到顶部
+                    coroutineScope.launch {
+                        lazyListState.animateScrollToItem(0)
+                    }
+                })
             }
         }
     }
@@ -181,6 +204,32 @@ fun NextPageLoadError(onClick: () -> Unit) {
     ) {
         Button(onClick = onClick) {
             Text(text = "重试")
+        }
+    }
+}
+
+/**
+ * 没有更多了
+ * */
+@Composable
+fun NotMoreDataFindUI(onClick: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center,
+    ) {
+        TextButton(
+            onClick = onClick,
+            shape = RoundedCornerShape(4.dp),
+            colors = ButtonDefaults.textButtonColors(backgroundColor = gray300),
+            elevation = ButtonDefaults.elevation(
+                defaultElevation = 2.dp,
+                pressedElevation = 4.dp,
+            ),
+        ) {
+            Text(text = "没有更多了哦~ | Click TOP", color = gray800)
         }
     }
 }

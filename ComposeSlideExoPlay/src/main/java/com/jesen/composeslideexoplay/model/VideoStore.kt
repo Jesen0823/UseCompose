@@ -41,8 +41,8 @@ data class VideoInfo(
     val id: Int?,
     val idx: Int?,
     val ifLimitVideo: Boolean = false,
-    val label: String?,
-    val labelList: List<String>?,
+    val label: Label? = null,
+    val labelList: List<LabelExt>?,
     val lastViewTime: String?,
     val library: String?,
     val playInfo: List<PlayInfo>?,
@@ -164,4 +164,15 @@ data class Url(
     val name: String,
     val size: Int,
     val url: String
+)
+
+data class Label(
+    val text: String? = "360°全景",
+    val card: String? = "360°全景",
+    val detail: String? = "360°全景"
+)
+
+data class LabelExt(
+    val text: String? = "360°全景",
+    val actionUrl: String? = ":null"
 )

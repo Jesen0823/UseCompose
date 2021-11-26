@@ -4,11 +4,15 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
 import androidx.compose.material.ButtonDefaults.elevation
 import androidx.compose.material.ButtonDefaults.textButtonColors
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -19,7 +23,10 @@ import androidx.paging.compose.LazyPagingItems
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.jesen.driverexampaging.R
-import com.jesen.driverexampaging.ui.theme.*
+import com.jesen.driverexampaging.ui.theme.gray300
+import com.jesen.driverexampaging.ui.theme.gray600
+import com.jesen.driverexampaging.ui.theme.gray700
+import kotlinx.coroutines.launch
 
 /**
  * 下拉加载封装
@@ -31,18 +38,21 @@ fun <T : Any> SwipeRefreshList(
     collectAsLazyPagingItems: LazyPagingItems<T>,
     listContent: LazyListScope.() -> Unit,
 ) {
-
     val rememberSwipeRefreshState = rememberSwipeRefreshState(isRefreshing = false)
 
     SwipeRefresh(
         state = rememberSwipeRefreshState,
         onRefresh = { collectAsLazyPagingItems.refresh() }
     ) {
+        val lazyListState = rememberLazyListState()
+
+        val coroutineScope = rememberCoroutineScope()
 
         rememberSwipeRefreshState.isRefreshing =
             collectAsLazyPagingItems.loadState.refresh is LoadState.Loading
 
         LazyColumn(
+            state = lazyListState,
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight(),
@@ -63,6 +73,18 @@ fun <T : Any> SwipeRefreshList(
                             }
                         }
                     }
+
+                    loadState.append == LoadState.NotLoading(endOfPaginationReached = true) -> {
+                        // 已经没有更多数据了
+                        item {
+                            NoMoreDataFindItem(onClick = {
+                                coroutineScope.launch {
+                                    lazyListState.animateScrollToItem(0)
+                                }
+                            })
+                        }
+                    }
+
                     loadState.refresh is LoadState.Error -> {
                         if (collectAsLazyPagingItems.itemCount <= 0) {
                             //刷新的时候，如果itemCount小于0，第一次加载异常
@@ -86,7 +108,6 @@ fun <T : Any> SwipeRefreshList(
                     }
                 }
             }
-
         }
     }
 }
@@ -115,6 +136,29 @@ fun ErrorMoreRetryItem(retry: () -> Unit) {
         }
     }
 }
+
+@Composable
+fun NoMoreDataFindItem(onClick: () -> Unit) {
+    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+        TextButton(
+            onClick = { onClick() },
+            modifier = Modifier
+                .padding(20.dp)
+                .width(80.dp)
+                .height(30.dp),
+            shape = RoundedCornerShape(6.dp),
+            contentPadding = PaddingValues(3.dp),
+            colors = textButtonColors(backgroundColor = gray300),
+            elevation = elevation(
+                defaultElevation = 2.dp,
+                pressedElevation = 4.dp,
+            ),
+        ) {
+            Text(text = "已经没有更多数据啦 ~~ Click to top", color = gray600)
+        }
+    }
+}
+
 
 /**
  * 页面加载失败处理

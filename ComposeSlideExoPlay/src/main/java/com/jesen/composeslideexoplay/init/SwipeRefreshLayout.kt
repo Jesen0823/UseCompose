@@ -7,9 +7,11 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
 import androidx.compose.material.ButtonDefaults.elevation
 import androidx.compose.material.ButtonDefaults.textButtonColors
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -70,6 +72,10 @@ fun <T : Any> SwipeRefreshLayout(
                             }
                         }
                     }
+                    loadState.append == LoadState.NotLoading(endOfPaginationReached = true) -> {
+                        // 没有更多数据了
+                        item { NoMoreDataFindUI() }
+                    }
                     loadState.refresh is LoadState.Error -> {
                         if (collectAsLazyPagingItems.itemCount <= 0) {
                             //刷新的时候，如果itemCount小于0，第一次加载异常
@@ -119,6 +125,31 @@ fun ErrorMoreRetryItem(retry: () -> Unit) {
             ),
         ) {
             Text(text = "请重试", color = gray600)
+        }
+    }
+}
+
+/**
+ * 底部加载更多到底了
+ * */
+@Composable
+fun NoMoreDataFindUI() {
+    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+        TextButton(
+            onClick = {},
+            modifier = Modifier
+                .padding(20.dp)
+                .width(80.dp)
+                .height(30.dp),
+            shape = RoundedCornerShape(6.dp),
+            contentPadding = PaddingValues(3.dp),
+            colors = textButtonColors(backgroundColor = gray300),
+            elevation = elevation(
+                defaultElevation = 2.dp,
+                pressedElevation = 4.dp,
+            ),
+        ) {
+            Text(text = "没有更多了哦~", color = gray600)
         }
     }
 }
