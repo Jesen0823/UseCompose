@@ -117,8 +117,10 @@ fun ContentInfoList(
                 LoadingPageUI()
             }
         }
+
         if (appendState == LoadState.NotLoading(endOfPaginationReached = true)) {
             item {
+                // 没有更多了
                 NotMoreDataFindUI(onClick = {
                     // 回滚到顶部
                     coroutineScope.launch {

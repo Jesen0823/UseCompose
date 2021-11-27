@@ -5,13 +5,13 @@ first  study in Jetpack Compose
 
 | app                                                          | AnimationCodelab                                             | ThemingCodelab                                               |
 | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| ![LazyColumn列表](./capture/11-16_133035.jpg) | ![可收缩列表](./capture/11-16_142603.jpg) | ![主题定制](./capture/11-16_142211.jpg) |
+| <img src="./capture/11-16_133035.jpg" alt="LazyColumn列表" style="zoom: 200%;" /> | <img src="./capture/11-16_142603.jpg" alt="可收缩列表" style="zoom:80%;" /> | <img src="./capture/11-16_142211.jpg" alt="主题定制" style="zoom:80%;" /> |
 | 简单LazyColumn + animateColorAsState                         | LazyColumn+AnimatedVisibility+HomeTab                        | MaterialTheme+TopAppBar+Card+LazyColumn                      |
 
 
-| ui_abstraction                                           | ui_abstraction                                               |       |
+| ui_abstraction                                           | ui_abstraction                                               | ComposeExoPlay |
 | -------------------------------------------------------- | ------------------------------------------------------------ | ---- |
-| ![](./capture/11-16_142348.jpg) | ![gradLoyout](./capture/11-16_150254.jpg) |      |
+| <img src="./capture/11-16_142348.jpg" style="zoom:80%;" /> | <img src="./capture/11-16_150254.jpg" alt="gradLoyout" style="zoom:100%;" /> | <img src="./capture/ezgif-6-f9c653aa5e1b.gif" alt="ComposeExoPlay" style="zoom:150%;" /> |
 | 基本的LazyColumn  / ConstraintLayout / StaggeredGrid /   | 自定义Layout                                                 |      |
 
 
@@ -31,29 +31,29 @@ first  study in Jetpack Compose
       implementation "androidx.paging:paging-runtime-ktx:3.1.0-rc01"
       ```
     2. Paging实现分页加载，简单快捷可定制，内部管理了分页逻辑和异常处理，而分页规则需要自己定义。主要代码：
-
+    
       ```kotlin
-
+    
       class ExamSource(private val repository: Repository) : PagingSource<Int, Question>() {
-
+    
           private val TAG = "--ExamSource"
-
+    
           override fun getRefreshKey(state: PagingState<Int, Question>): Int? {
               return null
           }
-
+    
           override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Question> {
-
+    
               return try {
                   val currentPage = params.key ?: 1
                   val pageSize = params.loadSize
                   Log.d(TAG, "currentPage: $currentPage")
                   Log.d(TAG, "pageSize: $pageSize")
-
+    
                   // 传入当前页码，每页大小，然后请求数据。网络请求封装在repository
                   val responseList = repository.getExamList(currentPage, pageSize = pageSize)
                       .result?.resultData?.questionList ?: emptyList<Question>()
-
+    
                   // 加载分页
                   val everyPageSize = 4
                   val initPageSize = 8
@@ -71,7 +71,7 @@ first  study in Jetpack Compose
                       nextKey = null
                   }
                   Log.d(TAG, "final nextKey: $nextKey")
-
+    
                   LoadResult.Page(
                       data = responseList,
                       prevKey = preKey,
@@ -123,12 +123,12 @@ first  study in Jetpack Compose
                 rememberSystemUiController().setStatusBarColor(
                       Color.Transparent, darkIcons = MaterialTheme.colors.isLight
                 )
-
+    
                 // 底部导航栏颜色
                 rememberSystemUiController().setNavigationBarColor(
                      Color.Transparent, darkIcons = MaterialTheme.colors.isLight
                 )
-
+    
                 // ...
           }
      }
@@ -146,7 +146,7 @@ first  study in Jetpack Compose
                          rememberSystemUiController().setStatusBarColor(
                              Color.Transparent, darkIcons = MaterialTheme.colors.isLight
                          )
-
+    
                          Surface(color = MaterialTheme.colors.background) {
                              Scaffold(
                                  modifier = Modifier.fillMaxSize()
@@ -157,7 +157,7 @@ first  study in Jetpack Compose
                                           .statusBarsHeight()
                                           .fillMaxWidth()
                                       )
-
+    
                                       // 你的业务 Composable
                                  )
                              }
@@ -193,7 +193,7 @@ first  study in Jetpack Compose
            at androidx.compose.material.ScaffoldKt$ScaffoldLayout$1$1$1$bodyContentPlaceables$1.invoke(Scaffold.kt:314)
 ```
    1. 效果 ：
-   <img src="./capture/11-20_225027.gif" alt="下拉刷新效果" style="zoom:50%;" />
+      <img src="./capture/11-20_225027.gif" alt="下拉刷新效果" style="zoom:50%;" />
 
    2. 基本用法：
 
@@ -211,7 +211,7 @@ first  study in Jetpack Compose
             // Swipe 的状态
             val refreshState = rememberSwipeRefreshState(isRefreshing = false)
             val collectAsLazyPagingItems = viewModel.examList.collectAsLazyPagingItems()
-
+        
             SwipeRefresh(state = refreshState, onRefresh = {
                 collectAsLazyPagingItems.refresh()
             }) {
@@ -287,22 +287,22 @@ first  study in Jetpack Compose
           collectAsLazyPagingItems: LazyPagingItems<T>,
           listContent: LazyListScope.() -> Unit,
       ) {
-
+      
           val rememberSwipeRefreshState = rememberSwipeRefreshState(isRefreshing = false)
-
+      
           SwipeRefresh(
               state = rememberSwipeRefreshState,
               onRefresh = { collectAsLazyPagingItems.refresh() }
           ) {
-
+      
               rememberSwipeRefreshState.isRefreshing =
                   collectAsLazyPagingItems.loadState.refresh is LoadState.Loading
-
+      
               LazyColumn(
                   modifier = Modifier
                       .fillMaxWidth()
                       .fillMaxHeight(),
-
+      
                   ) {
                   listContent()
                   collectAsLazyPagingItems.apply {
@@ -342,11 +342,11 @@ first  study in Jetpack Compose
                           }
                       }
                   }
-
+      
               }
           }
       }
-
+      
       /**
        * 底部加载更多失败处理
        * */
@@ -371,7 +371,7 @@ first  study in Jetpack Compose
               }
           }
       }
-
+      
       /**
        * 页面加载失败处理
        * */
@@ -407,7 +407,7 @@ first  study in Jetpack Compose
               ) { Text(text = "重试", color = gray700) }
           }
       }
-
+      
       /**
        * 底部加载更多正在加载中...
        * */
@@ -449,13 +449,13 @@ first  study in Jetpack Compose
                 viewModel: ExamViewModel,
                 context: Context,
             ) {
-
+            
                 val collectAsLazyPagingIDataList = viewModel.examList.collectAsLazyPagingItems()
-
+            
                 SwipeRefreshList(
                     collectAsLazyPagingItems = collectAsLazyPagingIDataList
                 ) {
-
+            
                     itemsIndexed(collectAsLazyPagingIDataList) { index, data ->
                         // 列表Item
                         QItemView(
@@ -471,7 +471,7 @@ first  study in Jetpack Compose
          2. ViewModel,包括Paging3的配置:
            ```kotlin
            class ExamViewModel : ViewModel() {
-
+         
                val examList = Pager(
                    config = PagingConfig(
                        pageSize = 4,    // 每一页个数
