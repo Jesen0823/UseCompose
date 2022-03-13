@@ -1,24 +1,17 @@
 package com.example.ui_abstraction.simple_cutom_layout
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.NavigateNext
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import com.example.ui_abstraction.ui.theme.LayoutsCodeTheme
-
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.example.ui_abstraction.LayoutsCodelab
-import com.example.ui_abstraction.MyOwnColumnLayout
+import com.example.ui_abstraction.ui.theme.LayoutsCodeTheme
 
 class CustomLayoutActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

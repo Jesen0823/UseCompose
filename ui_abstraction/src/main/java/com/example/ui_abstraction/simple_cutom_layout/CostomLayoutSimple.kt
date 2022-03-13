@@ -1,4 +1,4 @@
-package com.example.ui_abstraction
+package com.example.ui_abstraction.simple_cutom_layout
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text

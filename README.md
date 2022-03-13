@@ -485,6 +485,9 @@ first  study in Jetpack Compose
            }
            ```
 
+<img src="./capture/qr1.jpg" alt="demo" style="zoom:80%;" />
+<img src="./capture/qr2.jpg" alt="demo" style="zoom:80%;" />
+
 [代码示例：驾校考题列表]: https://github.com/Jesen0823/UseCompose/tree/main/DriverExamPaging
 
 

@@ -67,10 +67,16 @@ data class VideoInfo(
     val title: String?,
     val titlePgc: String?,
     val type: String?,
-    val videoPosterBean: String?,
+    val videoPosterBean: VideoPosterBean?,
     val waterMarks: String?,
     val webAdTrack: String?,
     val webUrl: WebUrl?
+)
+
+data class VideoPosterBean(
+    val scale: Double?,
+    val url: String?,
+    val fileSizeStr: String?
 )
 
 data class Author(
