@@ -5,21 +5,21 @@ first  study in Jetpack Compose
 
 | app                                                          | AnimationCodelab                                             | ThemingCodelab                                               |
 | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| <img src="./capture/11-16_133035.jpg" alt="LazyColumn列表" style="zoom: 200%;" /> | <img src="./capture/11-16_142603.jpg" alt="可收缩列表" style="zoom:80%;" /> | <img src="./capture/11-16_142211.jpg" alt="主题定制" style="zoom:80%;" /> |
-| 简单LazyColumn + animateColorAsState                         | LazyColumn+AnimatedVisibility+HomeTab                        | MaterialTheme+TopAppBar+Card+LazyColumn                      |
+| <img src="./capture/11-16_133035.jpg" alt="LazyColumn列表" width="260" /> | <img src="./capture/11-16_142603.jpg" alt="可收缩列表" width="260" /> | <img src="./capture/11-16_142211.jpg" alt="主题定制" width="260" /> |
+| 简单LazyColumn + animateColorAsState                         | LazyColumn + AnimatedVisibility + HomeTab                        | MaterialTheme + TopAppBar + Card + LazyColumn                      |
 
 
 | ui_abstraction                                           | ui_abstraction                                               | ComposeExoPlay |
-| -------------------------------------------------------- | ------------------------------------------------------------ | ---- |
-| <img src="./capture/11-16_142348.jpg" style="zoom:80%;" /> | <img src="./capture/11-16_150254.jpg" alt="gradLoyout" style="zoom:100%;" /> | <img src="./capture/ezgif-6-f9c653aa5e1b.gif" alt="ComposeExoPlay" style="zoom:150%;" /> |
-| 基本的LazyColumn  / ConstraintLayout / StaggeredGrid /   | 自定义Layout                                                 |      |
+| -------------------------------------------------------- | ------------------------------------------------------------ | ---- | 
+| <img src="./capture/11-16_142348.jpg"  width="260" /> | <img src="./capture/11-16_150254.jpg" alt="gradLoyout" width="280" /> | <img src="./capture/ezgif-6-f9c653aa5e1b.gif" alt="ComposeExoPlay" width="260" /> |
+| 基本的LazyColumn  + ConstraintLayout + StaggeredGrid    | 自定义Layout   简单基础知识 简单基础知识                   |   Paging3 +  MVVM + compose + retrofit + LazyColumn + exoPlayer     |
 
 
 
-| DriverExamPaging                                             | CleanArchitecture                                            |      |
-| ------------------------------------------------------------ | ------------------------------------------------------------ | ---- |
-| <img src="./capture/11-20_145409-1.gif" alt="paging分页" style="zoom:80%;" /> | <img src="./capture/11-20_152428-1.gif" alt="CA" style="zoom:80%;" /> |      |
-| Paging3+ MVVM + compose+retrofit+LazyColumn                  | dagger:hilt+navigation+room+compose+mvvm+                    |      |
+| DriverExamPaging                                             | CleanArchitecture                                            |   占位占位占位   |
+| ------------------------------------------------------------ | ------------------------------------------------------------ | ----------------------------------------- |
+| <img src="./capture/11-20_145409-1.gif" alt="paging分页" width="260" /> | <img src="./capture/11-20_152428-1.gif" alt="CA" width="260" /> |   占位占位占位   |
+| Paging3+ MVVM + compose + retrofit + LazyColumn                  | dagger:hilt + navigation + room + compose + mvvm                    |  占位占位占位占位占位占位占位占位占位  |
 
 
 ### Paging3分页加载
